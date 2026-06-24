@@ -99,54 +99,46 @@ Thank you for trusting Prime Insurance Company.
 # IMPORT EXCEL
 # =========================
 def upload_data():
-    st.subheader("📤 Upload Dataset")
+    st.subheader("📂 Import Motor Renewal Data")
 
-    file = st.file_uploader("Upload Excel File", type=["xlsx"])
+    try:
+        df = pd.read_excel("motor_renewal_tracking.xlsx")
 
-    if file is not None:
-        df = pd.read_excel(file)
-
-        st.success("File loaded successfully ✔")
+        st.success(f"Dataset loaded successfully! ({len(df)} records)")
         st.dataframe(df.head())
 
-        # Prevent duplicate import issues
-        if st.button("Import Data into CRM"):
+        if st.button("Import into CRM"):
 
-            imported = 0
+            # Clear old records before importing
+            c.execute("DELETE FROM clients")
 
             for _, row in df.iterrows():
                 c.execute("""
                 INSERT INTO clients (
                     policy_number,
-                    vehicle_reg,
-                    premium,
                     policy_holder,
-                    commencement_date,
-                    expiry_date,
+                    vehicle_reg,
                     renewal_date,
                     notes,
                     call_status,
                     call_date
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, (
                     row.get("Policy Number", ""),
-                    row.get("Vehicle Registration", ""),
-                    row.get("Premium", ""),
                     row.get("Policy Holder", ""),
-                    row.get("Commencement Date", ""),
-                    row.get("Expiry Date", ""),
+                    row.get("Vehicle Registration", ""),
                     row.get("Renewal Date", ""),
-                    row.get("Notes", ""),
-                    "Pending",
-                    ""
+                    row.get("Feedback", ""),
+                    row.get("Call Status", "Pending"),
+                    row.get("Call Date", "")
                 ))
 
-                imported += 1
-
             conn.commit()
+            st.success("✅ All records imported successfully!")
 
-            st.success(f"Data imported successfully ✔ ({imported} records)")
+    except FileNotFoundError:
+        st.error("❌ motor_renewal_tracking.xlsx was not found.")
 # =========================
 # SEARCH
 # =========================
