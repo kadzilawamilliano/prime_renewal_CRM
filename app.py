@@ -61,7 +61,6 @@ row = filtered_df[
 
 st.subheader("📄 Client Details")
 
-st.write("**Policy Number:**", row["Policy Number"])
 st.write("**Policy Holder:**", row["Policy Holder"])
 st.write("**Vehicle:**", row["Vehicle Registration"])
 st.write("**Phone:**", row["Phone Number"])
