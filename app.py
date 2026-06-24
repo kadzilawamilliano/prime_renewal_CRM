@@ -2,6 +2,92 @@ import streamlit as st
 import pandas as pd
 import urllib.parse
 import re
+conn = sqlite3.connect("crm.db", check_same_thread=False)
+c = conn.cursor()
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS clients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    reg_number TEXT,
+    status TEXT,
+    feedback TEXT
+)
+""")
+
+conn.commit()
+c.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    password TEXT,
+    role TEXT
+)
+""")
+
+conn.commit()
+
+def create_default_users():
+    c.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)",
+              ("admin", "admin123", "admin"))
+
+    c.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES (?, ?, ?)",
+              ("agent1", "pass1", "agent"))
+
+    conn.commit()
+
+create_default_users()
+
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "user" not in st.session_state:
+    st.session_state.user = None
+
+
+import streamlit as st
+
+def login():
+    st.title("🔐 CRM Login")
+
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Login"):
+        c.execute("SELECT * FROM users WHERE username=? AND password=?",
+                  (username, password))
+        user = c.fetchone()
+
+        if user:
+            st.session_state.logged_in = True
+            st.session_state.username = username
+            st.session_state.role = user[3]  # role column
+
+            st.success("Login successful!")
+            st.rerun()
+        else:
+            st.error("Invalid username or password")
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+    def main_app():
+    st.title("🚗 Motor Renewal CRM")
+
+    st.write(f"Welcome {st.session_state.username} ({st.session_state.role})")
+
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.session_state.username = None
+        st.rerun()
+
+    st.success("CRM Dashboard goes here")
+    if st.session_state.logged_in:
+    main_app()
+else:
+    login()
+
+
+
 
 st.set_page_config(page_title="Motor Renewal CRM", layout="wide")
 
