@@ -62,7 +62,7 @@ row = filtered_df[
 st.subheader("📄 Client Details")
 
 st.write("**Policy Holder:**", row["Policy Holder"])
-st.write("**Vehicle:**", row["Vehicle Registration"])
+st.write("**Vehicle:**", row["Registration"])
 st.write("**Phone:**", row["Phone Number"])
 st.write("**Renewal Date:**", row["Renewal Date"].strftime("%d %B %Y"))
 
