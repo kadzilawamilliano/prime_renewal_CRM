@@ -94,7 +94,7 @@ Hello {row['Policy Holder']},
 
 My name is Milliano Kadzilawa from Prime Insurance Company.
 
-This is a reminder that your insurance policy for vehicle {row['Vehicle Registration']} is due to expire on {expiry.strftime('%d %B %Y')}.
+This is a reminder that your insurance policy for your vehicle is due to expire on {expiry.strftime('%d %B %Y')}.
 
 Please visit any Prime Insurance office or contact your broker to renew.
 
