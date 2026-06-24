@@ -103,18 +103,30 @@ def upload_data():
 
     file = st.file_uploader("Upload Excel File", type=["xlsx"])
 
-    if file:
+    if file is not None:
         df = pd.read_excel(file)
 
+        st.success("File loaded successfully ✔")
         st.dataframe(df.head())
 
-        if st.button("Import Data"):
+        # Prevent duplicate import issues
+        if st.button("Import Data into CRM"):
+
+            imported = 0
+
             for _, row in df.iterrows():
                 c.execute("""
                 INSERT INTO clients (
-                    policy_number, vehicle_reg, premium, policy_holder,
-                    commencement_date, expiry_date, renewal_date,
-                    notes, call_status, call_date
+                    policy_number,
+                    vehicle_reg,
+                    premium,
+                    policy_holder,
+                    commencement_date,
+                    expiry_date,
+                    renewal_date,
+                    notes,
+                    call_status,
+                    call_date
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
@@ -130,9 +142,11 @@ def upload_data():
                     ""
                 ))
 
-            conn.commit()
-            st.success("Data imported successfully!")
+                imported += 1
 
+            conn.commit()
+
+            st.success(f"Data imported successfully ✔ ({imported} records)")
 # =========================
 # SEARCH
 # =========================
