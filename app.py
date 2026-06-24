@@ -69,11 +69,12 @@ def login():
         else:
             st.error("Invalid username or password")
 if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-    def main_app():
-    st.title("🚗 Motor Renewal CRM")
+st.session_state.logged_in = False
+def main_app():
+    
+st.title("🚗 Motor Renewal CRM")
 
-    st.write(f"Welcome {st.session_state.username} ({st.session_state.role})")
+st.write(f"Welcome {st.session_state.username} ({st.session_state.role})")
 
     if st.button("Logout"):
         st.session_state.logged_in = False
