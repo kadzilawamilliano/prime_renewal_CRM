@@ -102,7 +102,7 @@ def upload_data():
     st.subheader("📂 Import Motor Renewal Data")
 
     try:
-        df = pd.read_excel("motor_renewal_tracking.xlsx")
+        df = pd.read_excel("motor_renewals_tracking.xlsx")
 
         st.success(f"Dataset loaded successfully! ({len(df)} records)")
         st.dataframe(df.head())
