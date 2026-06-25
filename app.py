@@ -125,13 +125,13 @@ def upload_data():
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, (
-                    row.get("Policy Number", ""),
-                    row.get("Policy Holder", ""),
-                    row.get("Vehicle Registration", ""),
-                    row.get("Renewal Date", ""),
-                    row.get("Feedback", ""),
-                    row.get("Call Status", "Pending"),
-                    row.get("Call Date", "")
+                    str(row.get("Policy Number", "")),
+                    str(row.get("Policy Holder", "")),
+                   str(row.get("Vehicle Registration", "")),
+                    str(row.get("Renewal Date", "")),
+                    str(row.get("Feedback", "")),
+                    str(row.get("Call Status", "Pending")),
+                    str(row.get("Call Date", "")
                 ))
 
             conn.commit()
