@@ -122,7 +122,7 @@ def upload_data():
                     notes,
                     call_status,
                     call_date
-                """)
+                )
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, (
                     str(row.get("Policy Number", "")),
