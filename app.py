@@ -122,7 +122,7 @@ def upload_data():
                     notes,
                     call_status,
                     call_date
-                )
+                """)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 """, (
                     str(row.get("Policy Number", "")),
@@ -131,7 +131,7 @@ def upload_data():
                     str(row.get("Renewal Date", "")),
                     str(row.get("Feedback", "")),
                     str(row.get("Call Status", "Pending")),
-                    str(row.get("Call Date", "")
+                    str(row.get("Call Date", ""))
                 ))
 
             conn.commit()
