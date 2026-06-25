@@ -80,20 +80,7 @@ def login():
 
 # =========================
 # WHATSAPP MESSAGE
-# =========================
-def build_whatsapp_message(name, reg, expiry):
-    msg = f"""
-Hello, {name}
-
-My name is Milliano Kadzilawa, I'm from Prime Insurance Company.
-
-This is a reminder that your insurance policy for vehicle {reg} is about to expire on {expiry}.
-
-We kindly encourage you to renew your insurance through our agents or visit our office directly.
-
-Thank you for trusting Prime Insurance Company.
-"""
-    return urllib.parse.quote(msg)
+# =================
 
 # =========================
 # IMPORT EXCEL
@@ -142,23 +129,6 @@ def upload_data():
 # =========================
 # SEARCH
 # =========================
-def search_clients():
-    st.subheader("🔍 Search Client")
-
-    search = st.text_input("Search (Policy / Name / Vehicle Reg)")
-
-    if search:
-        c.execute("""
-        SELECT * FROM clients
-        WHERE policy_number LIKE ?
-        OR vehicle_reg LIKE ?
-        OR policy_holder LIKE ?
-        """, (f"%{search}%", f"%{search}%", f"%{search}%"))
-
-        results = c.fetchall()
-
-        for r in results:
-            st.write(r)
 
 # =========================
 # RENEWAL TYPE
@@ -176,65 +146,262 @@ def renewal_type(comm, exp):
 
 # =========================
 # CLIENT ACTIONS
-# =========================
-def client_actions():
-    st.subheader("📞 Client Actions")
+%%writefile app.py
+import streamlit as st
+import pandas as pd
 
-    c.execute("SELECT id, policy_holder, vehicle_reg, expiry_date FROM clients")
-    clients = c.fetchall()
+# =============================
+# LOAD DATA
+# =============================
+import streamlit as st
+import sqlite3
+import pandas as pd
+import urllib.parse
+import re
+from datetime import datetime
 
-    if not clients:
-        st.warning("No clients found")
-        return
+# =============================
+# DATABASE
+# =============================
+conn = sqlite3.connect("crm.db", check_same_thread=False)
+c = conn.cursor()
 
-    for cl in clients:
-        cid, name, reg, expiry = cl
+# =============================
+# LOAD CLIENTS
+# =============================
+df = pd.read_sql_query("SELECT * FROM clients", conn)
+# =============================
+# SESSION STORAGE (CALL LOGS)
+# =============================
 
-        st.write(f"**{name} | {reg}**")
+# =============================
+# STEP 1: SELECT CLIENT
+# =============================
+# =============================
+# STEP 1: SEARCH & SELECT CLIENT
+# ======================
+# =============================
+# SEARCH CLIENT
+# =============================
 
-        col1, col2 = st.columns(2)
+search = st.text_input(
+    "🔍 Search Client (Policy Number / Name / Vehicle)"
+)
 
-        # 📞 CALL BUTTON
-        with col1:
-            if st.button(f"📞 Call {cid}"):
-                c.execute("""
-                UPDATE clients
-                SET call_status=?, call_date=?
-                WHERE id=?
-                """, ("Called", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), cid))
+if search:
+    filtered_df = df[
+        df.astype(str)
+        .apply(lambda x: x.str.contains(search, case=False, na=False))
+        .any(axis=1)
+    ]
+else:
+    filtered_df = df
 
-                conn.commit()
-                st.success("Marked as Called")
+if filtered_df.empty:
+    st.warning("No client found.")
+    st.stop()
 
-        # 📲 WHATSAPP BUTTON
-        with col2:
-            msg = build_whatsapp_message(name, reg, expiry)
-            url = f"https://wa.me/?text={msg}"
+client = st.selectbox(
+    "Select Client",
+    filtered_df["policy_holder"].unique()
+)
 
-            st.markdown(f'<a href="{url}" target="_blank">📲 WhatsApp</a>',
-                        unsafe_allow_html=True)
+row = filtered_df[
+    filtered_df["policy_holder"] == client
+].iloc[0]
+# =============================
+# STEP 2: SHOW DETAILS
+st.subheader("📄 Client Details")
 
-        st.markdown("---")
 
-# =========================
-# VIEW CLIENTS
-# =========================
-def view_clients():
-    st.subheader("📋 Clients")
+‎
 
-    c.execute("SELECT * FROM clients")
-    data = c.fetchall()
 
-    for r in data:
-        st.write(
-            f"""
-Policy: {r[1]}  
-Name: {r[3]}  
-Vehicle: {r[2]}  
-Status: {r[9]}  
-Type: {renewal_type(r[5], r[6])}
+‎st.write(f"📄 Policy Number: {row['Policy Number']}")
+
+
+‎st.write(f"📄 Policy Holder: {row['Policy Holder']}")
+
+
+‎st.write(f"🚘 Vehicle: {row['Vehicle Registration']}")
+
+
+‎st.write(f"📞 Phone: {row['Phone Number']}")
+
+
+‎st.write(f"📅 Renewal Date: {row['Renewal Date']}")
+
+
+
+# =============================
+# STEP 3: CALL / WHATSAPP
+# =============================
+#phone = str(row["Phone Number"]).strip()
+
+#st.markdown(
+   # f"📞 [Call Client](tel:{phone})",
+  #  unsafe_allow_html=True
+#)
+
+#st.markdown(
+  #  f"💬 [WhatsApp Client](https://wa.me/{phone})",
+   # unsafe_allow_html=True
+#)
+# ===============
+import urllib.parse
+
+import streamlit as st
+
+‎import pandas as pd
+
+‎
+
+‎phone = str(row["Phone Number"]).strip()
+
+‎reg_number = row["Vehicle Registration"]
+
+‎Name = row["Policy Holder"]
+
+import re
+
+phone = str(row["Phone Number"])
+phone = re.sub(r"\D", "", phone)  # Remove spaces and other non-digit characters
+
+# Convert international format (265...) to local format (0...)
+if phone.startswith("265"):
+    phone = "0" + phone[3:]
+
+‎st.markdown(
+  f"📞 [Call Client](tel:{phone})",
+     unsafe_allow_html=True
+    )
+
+‎# Convert renewal date to datetime
+
+‎renewal_date = pd.to_datetime(row["Renewal Date"])
+
+‎
+
+‎# Compute expiry date (1 day before renewal)
+
+‎expiry_date = renewal_date - pd.Timedelta(days=1)
+
+‎
+
+‎# Format date nicely
+
+‎expiry_date_str = expiry_date.strftime("%d %B %Y")
+
+
+
+message = f"""
+Hello, {Name}
+
+My name is Milliano Kadzilawa, I'm from Prime Insurance Company.
+
+This is a reminder that your insurance policy for vehicle {reg_number} is about to expire on {expiry_date_str}.
+
+We kindly encourage you to renew your insurance through our agents or visit our office directly.
+
+Thank you for trusting Prime Insurance Company.
 """
-        )
+import re
+
+phone = str(row["Phone Number"])
+phone = re.sub(r"\D", "", phone)
+
+if phone.startswith("0"):
+    phone = "265" + phone[1:]
+
+st.write("Phone:", phone)
+st.write("WhatsApp URL:", f"https://wa.me/{phone}")
+
+
+encoded = urllib.parse.quote(message)
+
+whatsapp_url = f"https://wa.me/{phone}?text={encoded}"
+
+st.markdown(f"[💬 WhatsApp Client]({whatsapp_url})", unsafe_allow_html=True)
+# =============================
+# STEP 4: CALL OUTCOME
+# =============================
+st.subheader("📞 Call Outcome")
+
+outcome = st.selectbox(
+    "Select outcome",
+    [
+        "No Answer",
+        "Busy",
+        "Wrong Number",
+        "Will Renew",
+        "Pending Decision",
+        "Not Interested",
+        "Renewed Already",
+        "Not reachable",
+        "Invalid number"
+    ],
+    key=f"outcome_{row['Policy Number']}"
+)
+
+notes = st.text_area(
+    "Call Notes",
+    key=f"notes_{row['Policy Number']}"
+)
+
+# =============================
+# STEP 5: SAVE BUTTON
+# =============================
+st.session_state.call_logs[row["Policy Number"]] = {
+    "Policy Holder": row["Policy Holder"],
+    "Policy Number": row["Policy Number"],
+    "Vehicle": row["Vehicle Registration"],
+    "Phone": row["Phone Number"],
+    "Outcome": outcome,
+    "Notes": notes,
+    "Renewal Date": row["Renewal Date"]
+}
+
+#save permanently
+
+FILE_PATH = "/content/drive/MyDrive/Renewals/motor_renewals_tracking.xlsx"
+
+df = pd.read_excel(FILE_PATH)
+
+from datetime import datetime
+
+if st.button("💾 Save Call Record", key=f"save_{row['Policy Number']}"):
+
+    mask = df["Policy Number"] == row["Policy Number"]
+
+    df.loc[mask, "Call Date"] = datetime.now().strftime("%d-%m-%Y")
+    df.loc[mask, "Call Status"] = outcome
+    df.loc[mask, "Feedback"] = notes
+
+    df.to_excel(FILE_PATH, index=False)
+
+    st.success("✅ Call record saved successfully!")
+# =============================
+# STEP 6: CALL HISTORY
+# =============================
+st.markdown("---")
+st.subheader("📊 Call History")
+
+if st.session_state.call_logs:
+
+    for policy, data in st.session_state.call_logs.items():
+
+        st.write(f"👤 {data['Policy Holder']}")
+        st.write(f"📄 Policy: {data['Policy Number']}")
+        st.write(f"🎯 Outcome: {data['Outcome']}")
+        st.write(f"📝 Notes: {data['Notes']}")
+        st.write(f"📞 Phone: {data['Phone']}")
+        st.divider()
+
+else:
+    st.info("No call records yet.")
+
+
+# =========================
 
 # =========================
 # MAIN APP
