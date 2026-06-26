@@ -244,15 +244,15 @@ import urllib.parse
 
 import streamlit as st
 
-‎import pandas as pd
+import pandas as pd
 
-‎
 
-‎phone = str(row["Phone Number"]).strip()
 
-‎reg_number = row["Vehicle Registration"]
+phone = str(row["Phone Number"]).strip()
 
-‎Name = row["Policy Holder"]
+reg_number = row["Vehicle Registration"]
+
+Name = row["Policy Holder"]
 
 import re
 
@@ -263,28 +263,27 @@ phone = re.sub(r"\D", "", phone)  # Remove spaces and other non-digit characters
 if phone.startswith("265"):
     phone = "0" + phone[3:]
 
-‎st.markdown(
+st.markdown(
   f"📞 [Call Client](tel:{phone})",
      unsafe_allow_html=True
     )
 
-‎# Convert renewal date to datetime
+# Convert renewal date to datetime
 
-‎renewal_date = pd.to_datetime(row["Renewal Date"])
+renewal_date = pd.to_datetime(row["Renewal Date"])
 
-‎
 
 ‎# Compute expiry date (1 day before renewal)
 
 ‎expiry_date = renewal_date - pd.Timedelta(days=1)
 
-‎
-
-‎# Format date nicely
-
-‎expiry_date_str = expiry_date.strftime("%d %B %Y")
+‎expiry_date = renewal_date - pd.Timedelta(days=1)
 
 
+
+# Format date nicely
+
+expiry_date_str = expiry_date.strftime("%d %B %Y")
 
 message = f"""
 Hello, {Name}
