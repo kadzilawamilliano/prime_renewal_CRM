@@ -210,20 +210,19 @@ row = filtered_df[
     filtered_df["policy_holder"] == client
 ].iloc[0]
 # =============================
-# STEP 2: SHOW DETAILS
 st.subheader("📄 Client Details")
-
-‎st.write(f"📄 Policy Holder: {row['Policy Holder']}")
-
-
-‎st.write(f"🚘 Vehicle: {row['Vehicle Registration']}")
+#St.write(f"Policy Number: {row['Policy Number'])
+#
+#st.write(f"📄 Policy Holder: {row['Policy Holder']}")
 
 
-‎st.write(f"📞 Phone: {row['Phone Number']}")
+st.write(f"🚘 Vehicle: {row['Vehicle Registration']}")
 
 
-‎st.write(f"📅 Renewal Date: {row['Renewal Date']}")
+st.write(f"📞 Phone: {row['Phone Number']}")
 
+
+st.write(f"📅 Renewal Date: {row['Renewal Date']}")
 
 
 # =============================
