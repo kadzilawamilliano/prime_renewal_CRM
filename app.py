@@ -212,9 +212,7 @@ row = filtered_df[
 # =============================
 # STEP 2: SHOW DETAILS
 st.subheader("📄 Client Details")
-‎#St.write(f"Policy Number: {row['Policy Number'])
-#
-#
+
 ‎st.write(f"📄 Policy Holder: {row['Policy Holder']}")
 
 
