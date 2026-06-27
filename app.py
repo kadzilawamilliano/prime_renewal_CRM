@@ -267,13 +267,12 @@ st.markdown(
   f"📞 [Call Client](tel:{phone})",
      unsafe_allow_html=True
     )
-
 # Convert renewal date to datetime
 
 renewal_date = pd.to_datetime(row["Renewal Date"])
 
 
-‎# Compute expiry date (1 day before renewal)
+# Compute expiry date (1 day before renewal)
 
 ‎expiry_date = renewal_date - pd.Timedelta(days=1)
 
