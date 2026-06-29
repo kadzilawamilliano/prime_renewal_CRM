@@ -96,10 +96,10 @@ st.write("Files in folder:")
 st.write(os.listdir())
 df=pd.read_excel("motor_renewals_tracking.xlsx")
 
-        st.success(f"Dataset loaded successfully! ({len(df)} records)")
-        st.dataframe(df.head())
+st.success(f"Dataset loaded successfully! ({len(df)} records)")
+st.dataframe(df.head())
 
-        if st.button("Import into CRM"):
+if st.button("Import into CRM"):
 
             # Clear old records before importing
             c.execute("DELETE FROM clients")
