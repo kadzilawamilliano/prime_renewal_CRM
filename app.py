@@ -129,7 +129,7 @@ if st.button("Import into CRM"):
             conn.commit()
             st.success("✅ All records imported successfully!")
 
-except FileNotFoundError:
+#except FileNotFoundError:
         st.error("❌ motor_renewal_tracking.xlsx was not found.")
 # =========================
 # SEARCH
