@@ -36,7 +36,10 @@ CREATE TABLE IF NOT EXISTS clients (
 """)
 
 conn.commit()
-
+st.write("database connected")
+c.execute("SELECT name FROM
+sqlite_master WHERE type='table'")
+st.write(c.fetchall())
 # =========================
 # DEFAULT USER
 # =========================
@@ -87,9 +90,12 @@ def login():
 # =========================
 def upload_data():
     st.subheader("📂 Import Motor Renewal Data")
-
-    try:
-        df = pd.read_excel("motor_renewals_tracking.xlsx")
+import os
+st.write("Current folder:",
+os.getcwd())
+st.write("Files in folder:")
+st.write(os.listdir())
+df=pd.read_excel("motor_renewals_tracking.xlsx")
 
         st.success(f"Dataset loaded successfully! ({len(df)} records)")
         st.dataframe(df.head())
