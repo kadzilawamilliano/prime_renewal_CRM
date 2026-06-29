@@ -37,8 +37,7 @@ CREATE TABLE IF NOT EXISTS clients (
 
 conn.commit()
 st.write("database connected")
-c.execute("SELECT name FROM
-sqlite_master WHERE type='table'")
+c.execute("SELECT name FROM sqlite_master WHERE type='table'")
 st.write(c.fetchall())
 # =========================
 # DEFAULT USER
