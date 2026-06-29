@@ -273,7 +273,6 @@ renewal_date = pd.to_datetime(row["Renewal Date"])
 
 
 # Compute expiry date (1 day before renewal)
-
 ‎expiry_date = renewal_date - pd.Timedelta(days=1)
 
 ‎expiry_date = renewal_date - pd.Timedelta(days=1)
