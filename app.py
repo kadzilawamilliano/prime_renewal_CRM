@@ -146,7 +146,6 @@ def renewal_type(comm, exp):
 
 # =========================
 # CLIENT ACTIONS
-%%writefile app.py
 import streamlit as st
 import pandas as pd
 
