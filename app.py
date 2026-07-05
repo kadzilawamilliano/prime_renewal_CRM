@@ -107,26 +107,33 @@ if st.button("Import into CRM"):
 
             for _, row in df.iterrows():
                 c.execute("""
-                INSERT INTO clients (
-                    policy_number,
-                    policy_holder,
-                    vehicle_reg,
-                    phone_number,
-                    renewal_date,
-                    notes,
-                    call_status,
-                    call_date
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    str(row.get("Policy Number", "")),
-                    str(row.get("Policy Holder", "")),
-                   str(row.get("Vehicle Registration", "")),
-                    str(row.get("Phone Number")),
-                    str(row.get("Renewal Date", "")),
-                    str(row.get("Feedback", "")),
-                    str(row.get("Call Status", "Pending")),
-                    str(row.get("Call Date", ""))
+INSERT INTO clients (
+    policy_number,
+    vehicle_reg,
+    premium,
+    phone_number,
+    policy_holder,
+    commencement_date,
+    expiry_date,
+    renewal_date,
+    notes,
+    call_status,
+    call_date
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+""", (
+    str(row.get("Policy Number", "")),
+    str(row.get("Vehicle Registration", "")),
+    str(row.get("Premium", "")),
+    str(row.get("Phone Number", "")),
+    str(row.get("Policy Holder", "")),
+    str(row.get("Commencement Date", "")),
+    str(row.get("Expiry Date", "")),
+    str(row.get("Renewal Date", "")),
+    str(row.get("Feedback", "")),
+    str(row.get("Call Status", "Pending")),
+    str(row.get("Call Date", ""))
+))
                 ))
 
             conn.commit()
