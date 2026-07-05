@@ -134,7 +134,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     str(row.get("Call Status", "Pending")),
     str(row.get("Call Date", ""))
 ))
-                ))
+        
 
             conn.commit()
             st.success("✅ All records imported successfully!")
