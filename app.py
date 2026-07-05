@@ -117,7 +117,7 @@ if st.button("Import into CRM"):
                     call_status,
                     call_date
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     str(row.get("Policy Number", "")),
                     str(row.get("Policy Holder", "")),
