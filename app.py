@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS clients (
     policy_number TEXT,
     vehicle_reg TEXT,
     premium TEXT,
-    phone_numbe TEXT,
+    phone_number TEXT,
     policy_holder TEXT,
     commencement_date TEXT,
     expiry_date TEXT,
