@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS clients (
     policy_number TEXT,
     vehicle_reg TEXT,
     premium TEXT,
+    phone_numbe TEXT,
     policy_holder TEXT,
     commencement_date TEXT,
     expiry_date TEXT,
@@ -110,6 +111,7 @@ if st.button("Import into CRM"):
                     policy_number,
                     policy_holder,
                     vehicle_reg,
+                    phone_number,
                     renewal_date,
                     notes,
                     call_status,
@@ -120,6 +122,7 @@ if st.button("Import into CRM"):
                     str(row.get("Policy Number", "")),
                     str(row.get("Policy Holder", "")),
                    str(row.get("Vehicle Registration", "")),
+                    str(row.get("Phone Number")),
                     str(row.get("Renewal Date", "")),
                     str(row.get("Feedback", "")),
                     str(row.get("Call Status", "Pending")),
@@ -215,18 +218,18 @@ row = filtered_df[
 ].iloc[0]
 # =============================
 st.subheader("📄 Client Details")
-#St.write(f"Policy Number: {row['Policy Number'])
+#St.write(f"Policy Number: {row['Policy_number'])
 #
-#st.write(f"📄 Policy Holder: {row['Policy Holder']}")
+#st.write(f"📄 Policy Holder: {row['Policy_holder']}")
 
 
-st.write(f"🚘 Vehicle: {row['Vehicle Registration']}")
+st.write(f"🚘 Vehicle: {row['Vehicle_reg']}")
 
 
-st.write(f"📞 Phone: {row['Phone Number']}")
+st.write(f"📞 Phone: {row['Phone_number']}")
 
 
-st.write(f"📅 Renewal Date: {row['Renewal Date']}")
+st.write(f"📅 Renewal Date: {row['renewal_date']}")
 
 
 # =============================
