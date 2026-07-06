@@ -228,7 +228,7 @@ st.subheader("📄 Client Details")
 #st.write(f"📄 Policy Holder: {row['Policy_holder']}")
 
 
-st.write(f"🚘 Vehicle: {row['Vehicle_reg']}")
+st.write(f"🚘 Vehicle: {row['vehicle_reg']}")
 
 
 st.write(f"📞 Phone: {row['Phone_number']}")
@@ -240,7 +240,7 @@ st.write(f"📅 Renewal Date: {row['renewal_date']}")
 # =============================
 # STEP 3: CALL / WHATSAPP
 # =============================
-#phone = str(row["Phone Number"]).strip()
+#phone = str(row["Phone_number"]).strip()
 
 #st.markdown(
    # f"📞 [Call Client](tel:{phone})",
@@ -260,9 +260,9 @@ import pandas as pd
 
 
 
-phone = str(row["Phone Number"]).strip()
+phone = str(row["Phone_number"]).strip()
 
-reg_number = row["Vehicle Registration"]
+#reg_number = row["Vehicle Registration"]
 
 Name = row["Policy_holder"]
 
@@ -300,7 +300,7 @@ Hello, {Name}
 
 My name is Milliano Kadzilawa, I'm from Prime Insurance Company.
 
-This is a reminder that your insurance policy for vehicle {reg_number} is about to expire on {expiry_date_str}.
+This is a reminder that your insurance policy for vehicle {vehicle_reg} is about to expire on {expiry_date_str}.
 
 We kindly encourage you to renew your insurance through our agents or visit our office directly.
 
