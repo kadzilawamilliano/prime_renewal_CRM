@@ -231,7 +231,7 @@ st.subheader("📄 Client Details")
 st.write(f"🚘 Vehicle: {row['vehicle_reg']}")
 
 
-st.write(f"📞 Phone: {row['Phone_number']}")
+st.write(f"📞 Phone: {row['phone_number']}")
 
 
 st.write(f"📅 Renewal Date: {row['renewal_date']}")
