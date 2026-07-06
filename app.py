@@ -264,11 +264,11 @@ phone = str(row["phone_number"]).strip()
 
 #reg_number = row["Vehicle Registration"]
 
-Name = row["Policy_holder"]
+Name = row["policy_holder"]
 
 import re
 
-phone = str(row["Phone_number"])
+phone = str(row["phone_number"])
 phone = re.sub(r"\D", "", phone)  # Remove spaces and other non-digit characters
 
 # Convert international format (265...) to local format (0...)
@@ -308,7 +308,7 @@ Thank you for trusting Prime Insurance Company.
 """
 import re
 
-phone = str(row["Phone_number"])
+phone = str(row["phone_number"])
 phone = re.sub(r"\D", "", phone)
 
 if phone.startswith("0"):
@@ -352,14 +352,14 @@ notes = st.text_area(
 # =============================
 # STEP 5: SAVE BUTTON
 # =============================
-st.session_state.call_logs[row["Policy Number"]] = {
-    "Policy Holder": row["Policy Holder"],
-    "Policy Number": row["Policy Number"],
-    "Vehicle": row["Vehicle Registration"],
-    "Phone": row["Phone Number"],
+st.session_state.call_logs[row["policy_number"]] = {
+    "Policy Holder": row["policy_holder"],
+    "Policy Number": row["policy_number"],
+    "Vehicle": row["vehicle_Reg"],
+    "Phone": row["phone_number"],
     "Outcome": outcome,
     "Notes": notes,
-    "Renewal Date": row["Renewal Date"]
+    "Renewal Date": row["renewal_date"]
 }
 
 #save permanently
@@ -368,7 +368,7 @@ from datetime import datetime
 
 if st.button("💾 Save Call Record", key=f"save_{row['Policy Number']}"):
 
-    mask = df["Policy Number"] == row["Policy Number"]
+    mask = df["policy_number"] == row["policy_number"]
 
     df.loc[mask, "Call Date"] = datetime.now().strftime("%d-%m-%Y")
     df.loc[mask, "Call Status"] = outcome
