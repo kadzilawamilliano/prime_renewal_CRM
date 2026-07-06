@@ -355,7 +355,7 @@ notes = st.text_area(
 st.session_state.call_logs[row["policy_number"]] = {
     "Policy Holder": row["policy_holder"],
     "Policy Number": row["policy_number"],
-    "Vehicle": row["vehicle_Reg"],
+    "Vehicle": row["vehicle_reg"],
     "Phone": row["phone_number"],
     "Outcome": outcome,
     "Notes": notes,
