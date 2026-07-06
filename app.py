@@ -260,7 +260,7 @@ import pandas as pd
 
 
 
-phone = str(row["Phone_number"]).strip()
+phone = str(row["phone_number"]).strip()
 
 #reg_number = row["Vehicle Registration"]
 
