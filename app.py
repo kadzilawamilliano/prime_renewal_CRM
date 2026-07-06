@@ -160,9 +160,7 @@ def renewal_type(comm, exp):
         return "Unknown"
 
 # =========================
-# CLIENT ACTIONS
-import streamlit as st
-import pandas as pd
+# CLIENT ACTION
 
 # =============================
 # LOAD DATA
@@ -266,11 +264,11 @@ phone = str(row["Phone Number"]).strip()
 
 reg_number = row["Vehicle Registration"]
 
-Name = row["Policy Holder"]
+Name = row["Policy_holder"]
 
 import re
 
-phone = str(row["Phone Number"])
+phone = str(row["Phone_number"])
 phone = re.sub(r"\D", "", phone)  # Remove spaces and other non-digit characters
 
 # Convert international format (265...) to local format (0...)
@@ -283,7 +281,7 @@ st.markdown(
     )
 # Convert renewal date to datetime
 
-renewal_date = pd.to_datetime(row["Renewal Date"])
+renewal_date = pd.to_datetime(row["renewal_date"])
 
 
 # Compute expiry date (1 day before renewal)
@@ -310,7 +308,7 @@ Thank you for trusting Prime Insurance Company.
 """
 import re
 
-phone = str(row["Phone Number"])
+phone = str(row["Phone_number"])
 phone = re.sub(r"\D", "", phone)
 
 if phone.startswith("0"):
@@ -366,10 +364,6 @@ st.session_state.call_logs[row["Policy Number"]] = {
 
 #save permanently
 
-FILE_PATH = "/content/drive/MyDrive/Renewals/motor_renewals_tracking.xlsx"
-
-df = pd.read_excel(FILE_PATH)
-
 from datetime import datetime
 
 if st.button("💾 Save Call Record", key=f"save_{row['Policy Number']}"):
@@ -393,8 +387,8 @@ if st.session_state.call_logs:
 
     for policy, data in st.session_state.call_logs.items():
 
-        st.write(f"👤 {data['Policy Holder']}")
-        st.write(f"📄 Policy: {data['Policy Number']}")
+        st.write(f"👤 {data['Policy_holder']}")
+        st.write(f"📄 Policy: {data['Policy_number']}")
         st.write(f"🎯 Outcome: {data['Outcome']}")
         st.write(f"📝 Notes: {data['Notes']}")
         st.write(f"📞 Phone: {data['Phone']}")
