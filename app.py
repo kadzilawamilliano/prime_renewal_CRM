@@ -352,31 +352,27 @@ notes = st.text_area(
 # =============================
 # STEP 5: SAVE BUTTON
 # =============================
-st.session_state.call_logs[row["policy_number"]] = {
-    "Policy Holder": row["policy_holder"],
-    "Policy Number": row["policy_number"],
-    "Vehicle": row["vehicle_reg"],
-    "Phone": row["phone_number"],
-    "Outcome": outcome,
-    "Notes": notes,
-    "Renewal Date": row["renewal_date"]
-}
-
-#save permanently
-
 from datetime import datetime
 
-if st.button("💾 Save Call Record", key=f"save_{row['Policy Number']}"):
+if st.button("💾 Save Call Record", key=f"save_{row['policy_number']}"):
 
-    mask = df["policy_number"] == row["policy_number"]
+    c.execute("""
+    UPDATE clients
+    SET
+        call_status = ?,
+        notes = ?,
+        call_date = ?
+    WHERE policy_number = ?
+    """, (
+        outcome,
+        notes,
+        datetime.now().strftime("%Y-%m-%d %H:%M"),
+        row["policy_number"]
+    ))
 
-    df.loc[mask, "Call Date"] = datetime.now().strftime("%d-%m-%Y")
-    df.loc[mask, "Call Status"] = outcome
-    df.loc[mask, "Feedback"] = notes
+    conn.commit()
 
-    df.to_excel(FILE_PATH, index=False)
-
-    st.success("✅ Call record saved successfully!")
+    st.success("✅ Call record saved permanently!")
 # =============================
 # STEP 6: CALL HISTORY
 # =============================
