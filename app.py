@@ -379,21 +379,24 @@ if st.button("💾 Save Call Record", key=f"save_{row['policy_number']}"):
 st.markdown("---")
 st.subheader("📊 Call History")
 
-if st.session_state.call_logs:
+history = pd.read_sql_query("""
+SELECT
+    policy_holder,
+    policy_number,
+    vehicle_reg,
+    phone_number,
+    call_status,
+    notes,
+    call_date
+FROM clients
+WHERE call_status IS NOT NULL
+ORDER BY call_date DESC
+""", conn)
 
-    for policy, data in st.session_state.call_logs.items():
-
-        st.write(f"👤 {data['Policy_holder']}")
-        st.write(f"📄 Policy: {data['Policy_number']}")
-        st.write(f"🎯 Outcome: {data['Outcome']}")
-        st.write(f"📝 Notes: {data['Notes']}")
-        st.write(f"📞 Phone: {data['Phone']}")
-        st.divider()
-
-else:
+if history.empty:
     st.info("No call records yet.")
-
-
+else:
+    st.dataframe(history)
 # =========================
 
 # =========================
