@@ -341,12 +341,12 @@ outcome = st.selectbox(
         "Not reachable",
         "Invalid number"
     ],
-    key=f"outcome_{row['Policy Number']}"
+    key=f"outcome_{row['policy_number']}"
 )
 
 notes = st.text_area(
     "Call Notes",
-    key=f"notes_{row['Policy Number']}"
+    key=f"notes_{row['policy_number']}"
 )
 
 # =============================
