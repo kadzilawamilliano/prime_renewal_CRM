@@ -262,7 +262,7 @@ import pandas as pd
 
 phone = str(row["phone_number"]).strip()
 
-#reg_number = row["Vehicle Registration"]
+reg_number = row["vehicle_reg"]
 
 Name = row["policy_holder"]
 
@@ -300,7 +300,7 @@ Hello, {Name}
 
 My name is Milliano Kadzilawa, I'm from Prime Insurance Company.
 
-This is a reminder that your insurance policy for vehicle {vehicle_reg} is about to expire on {expiry_date_str}.
+This is a reminder that your insurance policy for vehicle {reg_number} is about to expire on {expiry_date_str}.
 
 We kindly encourage you to renew your insurance through our agents or visit our office directly.
 
