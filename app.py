@@ -267,18 +267,18 @@ reg_number = row["vehicle_reg"]
 Name = row["policy_holder"]
 
 import re
-
 phone = str(row["phone_number"])
-phone = re.sub(r"\D", "", phone)  # Remove spaces and other non-digit characters
+phone = re.sub(r"\D", "", phone)
 
-# Convert international format (265...) to local format (0...)
+# Convert 265... to local format
 if phone.startswith("265"):
     phone = "0" + phone[3:]
 
-st.markdown(
-  f"📞 [Call Client](tel:{phone})",
-     unsafe_allow_html=True
-    )
+st.link_button(
+    "📞 Call Client",
+    f"tel:{phone}"
+)
+
 # Convert renewal date to datetime
 
 renewal_date = pd.to_datetime(row["renewal_date"])
@@ -307,15 +307,22 @@ We kindly encourage you to renew your insurance through our agents or visit our 
 Thank you for trusting Prime Insurance Company.
 """
 import re
-
 phone = str(row["phone_number"])
 phone = re.sub(r"\D", "", phone)
 
+# Convert local number to international
 if phone.startswith("0"):
     phone = "265" + phone[1:]
 
-st.write("Phone:", phone)
-st.write("WhatsApp URL:", f"https://wa.me/{phone}")
+encoded = urllib.parse.quote(message)
+
+whatsapp_url = f"https://wa.me/{phone}?text={encoded}"
+
+st.link_button(
+    "💬 WhatsApp Client",
+    whatsapp_url
+)
+
 
 
 encoded = urllib.parse.quote(message)
