@@ -8,7 +8,7 @@ clients = pd.read_excel("motor_renewals_tracking.xlsx")
 # Display buttons for each client
 for index, row in clients.iterrows():
 
-    st.write(row["policy_holder"])
-    st.write(row["vehicle_reg"])
+    st.write(row["Policy Holder"])
+    st.write(row["Vehicle Registration"])
 
     client_buttons(row)
