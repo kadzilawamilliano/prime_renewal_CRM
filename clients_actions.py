@@ -35,7 +35,8 @@ Kindly renew your policy.
 Thank you.
 """
 
-    encoded = urllib.parse.quote(message)
+    
+encoded = urllib.parse.quote(message)
 
     whatsapp = (
         f"https://wa.me/{wa_phone}?text={encoded}"
