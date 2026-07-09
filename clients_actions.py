@@ -17,8 +17,8 @@ def client_buttons(row):
     )
 expiry = pd.to_datetime(row["Renewal Date"]) - pd.Timedelta(days=1)
     
-
-    message = f"""
+ 
+message = f"""
 Hello {row['Policy Holder']},
 expiry = pd.to_datetime(
     row["Renewal Date"]
