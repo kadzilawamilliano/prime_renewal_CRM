@@ -15,12 +15,15 @@ def client_buttons(row):
     renewal_date = pd.to_datetime(
         row["Renewal Date"]
     )
-
-    expiry = row("Renewal Date") - pd.Timedelta(days=1)
+expiry = pd.to_datetime(
+    row["Renewal Date"]) - pd.Timedelta(days=1)
+    
 
     message = f"""
 Hello {row['Policy Holder']},
-
+expiry = pd.to_datetime(
+    row["Renewal Date"]
+) - pd.Timedelta(days=1)
 My name is Milliano Kadzilawa from Prime Insurance Company.
 
 This is a reminder that your insurance policy for vehicle
