@@ -38,7 +38,7 @@ Thank you.
     
 encoded = urllib.parse.quote(message)
 
-    whatsapp = (
+whatsapp = (
         f"https://wa.me/{wa_phone}?text={encoded}"
     )
 
