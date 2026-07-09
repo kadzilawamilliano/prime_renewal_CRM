@@ -9,22 +9,22 @@ from utils import clean_phone
 def client_buttons(row):
 
     local_phone, wa_phone = clean_phone(
-        row["phone_number"]
+        row["Phone Number"]
     )
 
     renewal_date = pd.to_datetime(
-        row["renewal_date"]
+        row["Renewal Date"]
     )
 
-    expiry = renewal_date - pd.Timedelta(days=1)
+    expiry = row("Renewal Date") - pd.Timedelta(days=1)
 
     message = f"""
-Hello {row['policy_holder']},
+Hello {row['Policy Holder']},
 
 My name is Milliano Kadzilawa from Prime Insurance Company.
 
 This is a reminder that your insurance policy for vehicle
-{row['vehicle_reg']}
+{row['Vehicle Registration']}
 expires on
 {expiry.strftime('%d %B %Y')}.
 
