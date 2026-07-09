@@ -1,4 +1,3 @@
-
 import urllib.parse
 import pandas as pd
 import streamlit as st
@@ -42,12 +41,12 @@ whatsapp = (
         f"https://wa.me/{wa_phone}?text={encoded}"
     )
 
-    st.link_button(
+st.link_button(
         "💬 WhatsApp Client",
         whatsapp
     )
 
-    st.markdown(
+st.markdown(
         f'<a href="tel:{local_phone}">📞 Call Client</a>',
         unsafe_allow_html=True
     )
