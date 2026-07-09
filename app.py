@@ -274,9 +274,14 @@ phone = re.sub(r"\D", "", phone)
 if phone.startswith("265"):
     phone = "0" + phone[3:]
 
-st.link_button(
-    "📞 Call Client",
-    f"tel:{phone}"
+st.markdown(
+    f'<a href="https://wa.me/{wa_phone}?text={encoded}" target="_blank">💬 WhatsApp Client</a>',
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    f'<a href="tel:{phone}">📞 Call Client</a>',
+    unsafe_allow_html=True,
 )
 
 # Convert renewal date to datetime
