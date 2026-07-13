@@ -377,25 +377,25 @@ with col2:
     
     
 st.write(client.index.tolist())
-    st.info(
+st.info(
         client["Premium"]
     )
 
 
-    st.write(
-        ":material/event: **Commencement Date**"
+st.write(
+    ":material/event: **Commencement Date**"
     )
 
-    st.info(
+st.info(
         client["Commencement Date"]
     )
 
 
-    st.write(
+st.write(
         ":material/event_available: **Renewal Date**"
     )
 
-    st.info(
+st.info(
         client["Renewal Date"]
     )
 
