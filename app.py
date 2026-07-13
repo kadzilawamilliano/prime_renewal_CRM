@@ -94,13 +94,22 @@ cursor = conn.cursor()
 # =====================================
 # CREATE CALL LOG TABLE
 # =====================================
+# =====================================
+# ANALYTICS DATABASE STRUCTURE
+# =====================================
 
 
 cursor.execute("""
 
 CREATE TABLE IF NOT EXISTS call_logs(
 
-    policy_number TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    policy_number TEXT,
+
+    policy_holder TEXT,
+
+    premium REAL,
 
     call_date TEXT,
 
@@ -110,7 +119,9 @@ CREATE TABLE IF NOT EXISTS call_logs(
 
     next_follow_up TEXT,
 
-    renewed TEXT
+    renewed TEXT,
+
+    user TEXT
 
 )
 
@@ -118,7 +129,6 @@ CREATE TABLE IF NOT EXISTS call_logs(
 
 
 conn.commit()
-
 
 
 # =====================================
