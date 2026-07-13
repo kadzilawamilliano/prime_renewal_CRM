@@ -593,3 +593,119 @@ st.write(
     ":material/event_busy: Expected Expiry Date:",
     expiry_date_text
     )
+# =====================================
+# PHASE 4
+# CALL OUTCOME & SAVE RECORD
+# =====================================
+
+st.divider()
+
+st.subheader(":material/edit_note: Call Outcome")
+
+# Get selected client
+client = st.session_state["selected_client"]
+
+
+# -------------------------------------
+# Call Status
+# -------------------------------------
+
+call_status = st.selectbox(
+
+    "Call Status",
+
+    [
+
+        "No Answer",
+        "Busy",
+        "Wrong Number",
+        "Will Renew",
+        "Pending Decision",
+        "Not Interested",
+        "Renewed Already",
+        "Not Reachable",
+        "Will Not Renew",
+        "Invalid Number"
+
+    ]
+
+)
+
+
+# -------------------------------------
+# Feedback
+# -------------------------------------
+
+feedback = st.text_area(
+
+    "Feedback / Notes",
+
+    height=120
+
+)
+
+
+# -------------------------------------
+# Next Follow Up
+# -------------------------------------
+
+next_follow_up = st.date_input(
+
+    "Next Follow Up Date",
+
+    value=datetime.today()
+
+)
+
+
+# -------------------------------------
+# Renewed
+# -------------------------------------
+
+renewed = st.selectbox(
+
+    "Policy Renewed?",
+
+    [
+
+        "No",
+        "Yes"
+
+    ]
+
+)
+
+
+# -------------------------------------
+# Save Button
+# -------------------------------------
+
+if st.button(
+
+    ":material/save: Save Call Record",
+
+    use_container_width=True
+
+):
+
+    save_call_record(
+
+        policy_number=client["Policy Number"],
+
+        call_status=call_status,
+
+        feedback=feedback,
+
+        next_follow_up=str(next_follow_up),
+
+        renewed=renewed
+
+    )
+
+    st.success(
+
+        "Call record saved successfully."
+
+    )
+
+    st.rerun()
