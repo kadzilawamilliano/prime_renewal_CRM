@@ -375,8 +375,7 @@ with col2:
         ":material/payments: **Premium**"
     )
     
-    
-st.write(client.index.tolist())
+
 st.info(
         client["Premium"]
     )
