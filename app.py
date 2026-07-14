@@ -724,22 +724,26 @@ if st.button(
     use_container_width=True
 
 ):
+save_call_record(
 
-    save_call_record(
+    policy_number=client["Policy Number"],
 
-        policy_number=client["Policy Number"],
+    policy_holder=client["Policy Holder"],
 
-        call_status=call_status,
+    premium=client["Premium"],
 
-        feedback=feedback,
+    call_status=call_status,
 
-        next_follow_up=str(next_follow_up),
+    feedback=feedback,
 
-        renewed=renewed
+    next_follow_up=str(next_follow_up),
 
-    )
+    renewed=renewed
 
-    st.success(
+)
+    
+    
+st.success(
 
         "Call record saved successfully."
 
