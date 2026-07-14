@@ -129,7 +129,17 @@ CREATE TABLE IF NOT EXISTS call_logs(
 
 
 conn.commit()
+st.subheader("Database Structure")
 
+schema = pd.read_sql_query(
+
+    "PRAGMA table_info(call_logs)",
+
+    conn
+
+)
+
+st.dataframe(schema)
 
 # =====================================
 # SAVE CALL RECORD FUNCTION
