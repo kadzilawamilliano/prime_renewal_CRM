@@ -747,5 +747,4 @@ st.success(
         "Call record saved successfully."
 
     )
-
-    st.rerun()
+st.rerun()
