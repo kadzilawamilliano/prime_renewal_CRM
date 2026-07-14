@@ -779,7 +779,7 @@ history = pd.read_sql_query(
 )
 
 
-if history.empty():
+if history.empty:
 
     st.info(
         "No activities recorded for this client."
