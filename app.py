@@ -134,53 +134,81 @@ conn.commit()
 # =====================================
 # SAVE CALL RECORD FUNCTION
 # =====================================
+# =====================================
+# SAVE CALL ACTIVITY
+# =====================================
 
 
 def save_call_record(
-        policy_number,
-        call_status,
-        feedback,
-        next_follow_up,
-        renewed
+
+    policy_number,
+
+    policy_holder,
+
+    premium,
+
+    call_status,
+
+    feedback,
+
+    next_follow_up,
+
+    renewed,
+
+    user="Milliano"
+
 ):
 
 
     cursor.execute("""
 
-    INSERT OR REPLACE INTO call_logs
+    INSERT INTO call_logs
 
     (
 
     policy_number,
+    policy_holder,
+    premium,
     call_date,
     call_status,
     feedback,
     next_follow_up,
-    renewed
+    renewed,
+    user
 
     )
 
-    VALUES (?,?,?,?,?,?)
+
+    VALUES(?,?,?,?,?,?,?,?,?)
 
     """,
 
     (
 
     policy_number,
+
+    policy_holder,
+
+    premium,
+
     datetime.now().strftime(
         "%d-%m-%Y %H:%M"
     ),
+
     call_status,
+
     feedback,
+
     next_follow_up,
-    renewed
+
+    renewed,
+
+    user
 
     ))
 
 
     conn.commit()
-
-
 
 # =====================================
 # LOAD CALL HISTORY
