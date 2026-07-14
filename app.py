@@ -26,7 +26,29 @@ st.title(":material/directions_car: Motor Renewal Retention CRM System")
 st.caption(
     "Built by Milliano Benjamin Kadzilawa"
 )
+# =====================================
+# SIDEBAR
+# =====================================
 
+st.sidebar.title(":material/menu: Navigation")
+
+page = st.sidebar.radio(
+
+    "Go To",
+
+    [
+
+        "Dashboard",
+
+        "Client Management",
+
+        "Reports",
+
+        "Admin"
+
+    ]
+
+)
 
 # =====================================
 # EXCEL DATA SOURCE
