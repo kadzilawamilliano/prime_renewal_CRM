@@ -736,3 +736,104 @@ if st.button(
 
     st.rerun()
 
+# =====================================
+# PHASE 5
+# CLIENT ACTIVITY TIMELINE
+# =====================================
+
+st.divider()
+
+st.subheader(
+    ":material/history: Client Activity Timeline"
+)
+
+
+history = pd.read_sql_query(
+
+    """
+
+    SELECT *
+
+    FROM call_logs
+
+    WHERE policy_number = ?
+
+    ORDER BY id DESC
+
+    """,
+
+    conn,
+
+    params=(client["Policy Number"],)
+
+)
+
+
+if history.empty():
+
+    st.info(
+        "No activities recorded for this client."
+    )
+
+else:
+
+    for _, record in history.iterrows():
+
+        with st.container(border=True):
+
+            st.markdown(
+                f"### :material/phone_in_talk: {record['call_date']}"
+            )
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+
+                st.write(
+                    "**Call Status**"
+                )
+
+                st.success(
+                    record["call_status"]
+                )
+
+            with col2:
+
+                st.write(
+                    "**Renewed**"
+                )
+
+                if record["renewed"] == "Yes":
+
+                    st.success("YES")
+
+                else:
+
+                    st.warning("NO")
+
+
+            st.write(
+                "**Feedback**"
+            )
+
+            st.info(
+                record["feedback"]
+            )
+
+
+            st.write(
+                "**Next Follow Up**"
+            )
+
+            st.write(
+                record["next_follow_up"]
+            )
+
+
+            st.write(
+                "**Officer**"
+            )
+
+            st.write(
+                record["user"]
+            )
