@@ -712,40 +712,27 @@ renewed = st.selectbox(
 
 )
 
-
 # -------------------------------------
 # Save Button
-# ------------------------------------
+# -------------------------------------
 
 if st.button(
-
     ":material/save: Save Call Record",
-
     use_container_width=True
-
 ):
-save_call_record(
-
-    policy_number=client["Policy Number"],
-
-    policy_holder=client["Policy Holder"],
-
-    premium=client["Premium"],
-
-    call_status=call_status,
-
-    feedback=feedback,
-
-    next_follow_up=str(next_follow_up),
-
-    renewed=renewed
-
-)
-    
-    
-st.success(
-
-        "Call record saved successfully."
-
+    save_call_record(
+        policy_number=client["Policy Number"],
+        policy_holder=client["Policy Holder"],
+        premium=client["Premium"],
+        call_status=call_status,
+        feedback=feedback,
+        next_follow_up=str(next_follow_up),
+        renewed=renewed
     )
-st.rerun()
+
+    st.success(
+        "Call record saved successfully."
+    )
+
+    st.rerun()
+
