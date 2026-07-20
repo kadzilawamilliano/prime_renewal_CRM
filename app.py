@@ -536,7 +536,7 @@ if whatsapp_phone.startswith("0"):
 
 renewal_date = pd.to_datetime(
 
-    client["Renewal Date"],
+    client["Commencement Date"],
 
     errors="coerce"
 
