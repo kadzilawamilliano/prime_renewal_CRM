@@ -810,9 +810,9 @@ else:
                 "**Officer**"
             )
 
-            st.write(
-                record["user"]
-            )
+           # st.write(
+             #   record["user"]
+          #  )
             # =====================================
 
     
