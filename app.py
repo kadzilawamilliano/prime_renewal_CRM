@@ -4,7 +4,7 @@ import sqlite3
 from datetime import datetime
 import urllib.parse
 import re
-
+from supabase_client import supabase
 
 # =====================================
 # PAGE CONFIGURATION
@@ -96,7 +96,11 @@ def load_data():
 
 df = load_data()
 
-
+try:
+    supabase.table("call_logs").select("*").limit(1).execute()
+    st.sidebar.success("Supabase Connected")
+except Exception as e:
+    st.sidebar.error("Supabase Connection Failed")
 
 # =====================================
 # DATABASE CONNECTION
