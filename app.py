@@ -162,78 +162,42 @@ conn.commit()
 # =====================================
 # SAVE CALL ACTIVITY
 # =====================================
-
-
 def save_call_record(
-
     policy_number,
-
     policy_holder,
-
     premium,
-
     call_status,
-
     feedback,
-
     next_follow_up,
-
     renewed,
-
     user="Milliano"
-
 ):
 
+    data = {
 
-    cursor.execute("""
+        "policy_number": policy_number,
 
-    INSERT INTO call_logs
+        "policy_holder": policy_holder,
 
-    (
+        "vehicle_registration": client["Vehicle Registration"],
 
-    policy_number,
-    policy_holder,
-    premium,
-    call_date,
-    call_status,
-    feedback,
-    next_follow_up,
-    renewed,
-    user
+        "premium": None if pd.isna(premium) else float(premium),
 
-    )
+        "call_date": datetime.now().isoformat(),
 
+        "call_status": call_status,
 
-    VALUES(?,?,?,?,?,?,?,?,?)
+        "feedback": feedback,
 
-    """,
+        "next_follow_up": str(next_follow_up),
 
-    (
+        "renewed": renewed,
 
-    policy_number,
+        "username": user
 
-    policy_holder,
+    }
 
-    premium,
-
-    datetime.now().strftime(
-        "%d-%m-%Y %H:%M"
-    ),
-
-    call_status,
-
-    feedback,
-
-    next_follow_up,
-
-    renewed,
-
-    user
-
-    ))
-
-
-    conn.commit()
+    supabase.table("call_logs").insert(data).execute()
 
 # =====================================
 # LOAD CALL HISTORY
