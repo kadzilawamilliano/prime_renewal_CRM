@@ -736,26 +736,13 @@ st.subheader(
     ":material/history: Client Activity Timeline"
 )
 
+response = supabase.table("call_logs") \
+    .select("*") \
+    .eq("policy_number", client["Policy Number"]) \
+    .order("call_date", desc=True) \
+    .execute()
 
-history = pd.read_sql_query(
-
-    """
-
-    SELECT *
-
-    FROM call_logs
-
-    WHERE policy_number = ?
-
-    ORDER BY id DESC
-
-    """,
-
-    conn,
-
-    params=(client["Policy Number"],)
-
-)
+history = pd.DataFrame(response.data)
 
 
 if history.empty:
