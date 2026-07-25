@@ -220,3 +220,95 @@ def show_client_management(df):
         ]
 
     )
+        if st.button(
+
+        ":material/save: Save Record",
+
+        use_container_width=True
+
+    ):
+
+        save_call_record(
+
+            policy_number=client["Policy Number"],
+
+            policy_holder=client["Policy Holder"],
+
+            vehicle_registration=client["Vehicle Registration"],
+
+            premium=client["Premium"],
+
+            call_status=call_status,
+
+            feedback=feedback,
+
+            next_follow_up=follow_up,
+
+            renewed=renewed
+
+        )
+
+        st.success(
+
+            "Call record saved successfully."
+
+        )
+
+        st.rerun()
+            st.divider()
+
+    st.subheader(
+
+        ":material/history: Client Timeline"
+
+    )
+
+    history = get_client_history(
+
+        client["Policy Number"]
+
+    )
+
+    if history.empty:
+
+        st.info(
+
+            "No activities yet."
+
+        )
+
+    else:
+
+        for _, row in history.iterrows():
+
+            with st.container(border=True):
+
+                st.write(
+
+                    row["call_date"]
+
+                )
+
+                st.write(
+
+                    row["call_status"]
+
+                )
+
+                st.write(
+
+                    row["feedback"]
+
+                )
+
+                st.write(
+
+                    row["next_follow_up"]
+
+                )
+
+                st.write(
+
+                    row["renewed"]
+
+                )
