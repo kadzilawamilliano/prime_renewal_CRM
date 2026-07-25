@@ -15,7 +15,7 @@ from utils.whatsapp import (
     call_link
 )
 def show_client_management(df):
-        st.header(":material/groups: Client Management")
+    st.header(":material/groups: Client Management")
 
     search = st.text_input(
         "Search Client"
@@ -74,7 +74,7 @@ def show_client_management(df):
         filtered["Policy Holder"] == client
 
     ].iloc[0]
-        st.divider()
+    st.divider()
 
     st.subheader(":material/person: Client Profile")
 
@@ -155,7 +155,7 @@ def show_client_management(df):
             whatsapp_url
 
         )
-        st.divider()
+    st.divider()
 
     st.subheader(
 
@@ -220,7 +220,7 @@ def show_client_management(df):
         ]
 
     )
-        if st.button(
+    if st.button(
 
         ":material/save: Save Record",
 
