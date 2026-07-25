@@ -18,7 +18,7 @@ def show_dashboard(df):
     st.header(":material/dashboard: Executive Dashboard")
 
     dashboard = get_all_call_logs()
-        kpis = calculate_kpis(df, dashboard)
+    kpis = calculate_kpis(df, dashboard)
 
     c1, c2, c3, c4 = st.columns(4)
 
@@ -93,7 +93,7 @@ def show_dashboard(df):
         type=["xlsx"]
 
     )
-        if uploaded_file is not None:
+    if uploaded_file is not None:
 
         renewed_df = pd.read_excel(uploaded_file)
 
