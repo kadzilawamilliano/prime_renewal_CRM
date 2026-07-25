@@ -93,5 +93,83 @@ def show_dashboard(df):
         type=["xlsx"]
 
     )
-    
+        if uploaded_file is not None:
+
+        renewed_df = pd.read_excel(uploaded_file)
+
+        renewed_df.columns = renewed_df.columns.str.strip()
+
+        st.success(
+
+            f"{len(renewed_df)} policies loaded."
+
+        )
+
+        st.dataframe(
+
+            renewed_df.head()
+
+        )
+        
+            if st.button(
+
+            ":material/published_with_changes: Verify Renewals"
+
+        ):
+
+            updated = 0
+
+            not_found = 0
+
+            for _, row in renewed_df.iterrows():
+
+                policy = row["Policy Number"]
+
+                response = (
+
+                    supabase
+
+                    .table("call_logs")
+
+                    .update(
+
+                        {
+
+                            "renewed": "Yes"
+
+                        }
+
+                    )
+
+                    .eq(
+
+                        "policy_number",
+
+                        policy
+
+                    )
+
+                    .execute()
+
+                )
+
+                if response.data:
+
+                    updated += 1
+
+                else:
+
+                    not_found += 1
+
+            st.success(
+
+                f"{updated} policies verified successfully."
+
+            )
+
+            st.warning(
+
+                f"{not_found} policies were not found."
+
+            )
 
