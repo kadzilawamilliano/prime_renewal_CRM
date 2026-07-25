@@ -58,7 +58,7 @@ def show_dashboard(df):
         "Pending Follow-up",
         kpis["pending_followups"]
     )
-        st.divider()
+    st.divider()
 
     st.subheader(
         ":material/analytics: Activity Summary"
@@ -111,7 +111,7 @@ def show_dashboard(df):
 
         )
         
-            if st.button(
+        if st.button(
 
             ":material/published_with_changes: Verify Renewals"
 
