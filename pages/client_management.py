@@ -95,3 +95,128 @@ def show_client_management(df):
         st.info(client["Commencement Date"])
 
         st.info(client["Renewal Date"])
+
+            local_phone, whatsapp_phone = format_phone(
+
+        client["Phone Number"]
+
+    )
+
+    expiry = get_expiry_date(
+
+        client["Renewal Date"]
+
+    )
+
+    message = whatsapp_message(
+
+        client["Policy Holder"],
+
+        client["Vehicle Registration"],
+
+        expiry
+
+    )
+
+    whatsapp_url = whatsapp_link(
+
+        whatsapp_phone,
+
+        message
+
+    )
+
+    call_url = call_link(
+
+        local_phone
+
+    )
+
+    st.divider()
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+
+        st.link_button(
+
+            ":material/call: Call Client",
+
+            call_url
+
+        )
+
+    with c2:
+
+        st.link_button(
+
+            ":material/chat: WhatsApp",
+
+            whatsapp_url
+
+        )
+        st.divider()
+
+    st.subheader(
+
+        ":material/edit_note: Call Outcome"
+
+    )
+
+    call_status = st.selectbox(
+
+        "Call Status",
+
+        [
+
+            "No Answer",
+
+            "Busy",
+
+            "Wrong Number",
+
+            "Will Renew",
+
+            "Pending Decision",
+
+            "Not Interested",
+
+            "Renewed Already",
+
+            "Not Reachable",
+
+            "Will Not Renew",
+
+            "Invalid Number"
+
+        ]
+
+    )
+
+    feedback = st.text_area(
+
+        "Feedback"
+
+    )
+
+    follow_up = st.date_input(
+
+        "Next Follow Up",
+
+        datetime.today()
+
+    )
+
+    renewed = st.selectbox(
+
+        "Renewed",
+
+        [
+
+            "No",
+
+            "Yes"
+
+        ]
+
+    )
