@@ -80,7 +80,7 @@ def show_dashboard(df):
         "This Month",
         monthly_calls(dashboard)
     )
-        st.divider()
+    st.divider()
 
     st.subheader(
         ":material/upload_file: Verify Renewed Policies"
