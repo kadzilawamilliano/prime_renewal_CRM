@@ -96,7 +96,7 @@ def show_client_management(df):
 
         st.info(client["Renewal Date"])
 
-            local_phone, whatsapp_phone = format_phone(
+        local_phone, whatsapp_phone = format_phone(
 
         client["Phone Number"]
 
