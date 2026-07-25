@@ -255,7 +255,7 @@ def show_client_management(df):
         )
 
         st.rerun()
-            st.divider()
+    st.divider()
 
     st.subheader(
 
