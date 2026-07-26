@@ -39,6 +39,7 @@ def save_call_record(
         "next_follow_up": str(next_follow_up),
 
         "renewed": renewed,
+        "whatsapp_status": whatsapp_status,
 
         "username": username
 
