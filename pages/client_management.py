@@ -220,6 +220,15 @@ def show_client_management(df):
         ]
 
     )
+    whatsapp_status = st.selectbox(
+    "WhatsApp Status",
+    [
+        "Not Checked",
+        "Message Sent",
+        "No WhatsApp",
+        "Failed"
+    ]
+)
     if st.button(
 
         ":material/save: Save Record",
