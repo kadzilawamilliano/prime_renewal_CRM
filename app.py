@@ -6,6 +6,7 @@ from pages.client_management import show_client_management
 
 from supabase_client import supabase
 import admin
+import report
 
 
 # =====================================
