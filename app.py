@@ -43,9 +43,10 @@ page = st.sidebar.radio(
 
     [
 
-        "Dashboard",
-
+        
         "Client Management",
+        
+        "Dashboard",
 
         "Reports",
 
