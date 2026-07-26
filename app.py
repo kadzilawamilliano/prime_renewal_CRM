@@ -5,7 +5,7 @@ from pages.dashboard import show_dashboard
 from pages.client_management import show_client_management
 
 from supabase_client import supabase
-from admin import admin
+import admin
 
 
 # =====================================
