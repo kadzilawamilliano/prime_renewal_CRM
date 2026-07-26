@@ -229,7 +229,7 @@ def show_client_management(df):
         "Failed"
     ]
 )
-st.write("Current WhatsApp Status:", whatsapp_status)
+
 if st.button(
 
         ":material/save: Save Record",
@@ -237,7 +237,7 @@ if st.button(
         use_container_width=True
 
     ):
-        st.write("Selected WhatsApp Status:", whatsapp_status)
+        
         save_call_record(
 
             policy_number=client["Policy Number"],
