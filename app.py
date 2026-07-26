@@ -124,10 +124,11 @@ elif page == "Client Management":
     show_client_management(df)
 
 elif page == "Reports":
+    report.show(df)
 
     st.header(":material/assessment: Reports")
 
-    st.info("Reports module coming next.")
+    #st.info("Reports module coming next.")
 
 elif page == "Admin":
     admin.show(df)
