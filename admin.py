@@ -1,16 +1,16 @@
 import streamlit as st
 import pandas as pd
 from supabase_client import supabase
+def show(df):
+    st.title(":material/admin_panel_settings: Admin Panel")
 
-st.title(":material/admin_panel_settings: Admin Panel")
+    st.divider()
 
-st.divider()
+    st.subheader(":material/settings: System Status")
 
-st.subheader(":material/settings: System Status")
+    try:
 
-try:
-
-    response = (
+        response = (
         supabase
         .table("call_logs")
         .select("*", count="exact")
@@ -23,14 +23,14 @@ try:
 
     st.info(f"Total Call Logs : {total_logs}")
 
-except:
+        except:
 
-    st.error("Supabase Connection Failed")
-  st.divider()
+         st.error("Supabase Connection Failed")
+     st.divider()
 
-st.subheader(":material/upload_file: Portfolio Management")
+     st.subheader(":material/upload_file: Portfolio Management")
 
-uploaded_portfolio = st.file_uploader(
+      uploaded_portfolio = st.file_uploader(
 
     "Upload New Motor Portfolio",
 
@@ -38,30 +38,30 @@ uploaded_portfolio = st.file_uploader(
 
 )
 
-if uploaded_portfolio:
+    if uploaded_portfolio:
 
-    portfolio = pd.read_excel(uploaded_portfolio)
+        portfolio = pd.read_excel(uploaded_portfolio)
 
-    st.success(
+        st.success(
 
         f"{len(portfolio)} policies loaded."
 
     )
 
-    st.dataframe(
+        st.dataframe(
 
         portfolio.head()
 
     )
 
-    st.info(
+        st.info(
 
         "This portfolio can replace the existing renewal portfolio after validation."
 
     )
-  st.divider()
+    st.divider()
 
-st.subheader(":material/download: Data Management")
+    st.subheader(":material/download: Data Management")
 
 response = (
 
@@ -77,26 +77,26 @@ response = (
 
 logs = pd.DataFrame(response.data)
 
-st.download_button(
+   st.download_button(
 
-    "Download Call Logs",
+     "Download Call Logs",
 
-    logs.to_csv(index=False),
+      logs.to_csv(index=False),
 
     file_name="call_logs.csv",
 
     mime="text/csv"
 
 )
-st.divider()
+    st.divider()
 
-st.subheader(":material/info: System Information")
+    st.subheader(":material/info: System Information")
 
-st.write("CRM Version : 1.0")
+    st.write("CRM Version : 1.0")
 
-st.write("Developer : Milliano Benjamin Kadzilawa")
+    st.write("Developer : Milliano Benjamin Kadzilawa")
 
-st.write("Database : Supabase")
+    st.write("Database : Supabase")
 
-st.write("Application : Motor Renewal CRM")
+    st.write("Application : Motor Renewal CRM")
   
