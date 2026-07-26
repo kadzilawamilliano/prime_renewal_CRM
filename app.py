@@ -129,7 +129,8 @@ elif page == "Reports":
     st.info("Reports module coming next.")
 
 elif page == "Admin":
+    admin.show(df)
 
-    st.header(":material/admin_panel_settings: Admin")
+    #st.header(":material/admin_panel_settings: Admin")
 
-    st.info("Admin module coming next.")
+    #st.info("Admin module coming next.")
