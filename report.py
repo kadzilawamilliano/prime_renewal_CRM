@@ -155,3 +155,68 @@ def show(df):
     except Exception as e:
 
         st.error(f"Error loading call performance: {e}")
+            # =====================================
+    # CALL STATUS BREAKDOWN
+    # =====================================
+
+    st.divider()
+
+    st.subheader(":material/pie_chart: Call Status Breakdown")
+
+    try:
+
+        response = (
+            supabase
+            .table("call_logs")
+            .select("call_status")
+            .execute()
+        )
+
+        status_df = pd.DataFrame(response.data)
+
+        if status_df.empty:
+
+            st.warning("No call status records found.")
+
+        else:
+
+            # Clean call status values
+            status_df["call_status"] = (
+                status_df["call_status"]
+                .fillna("Unknown")
+                .astype(str)
+                .str.strip()
+            )
+
+            # Count each call status
+            status_counts = (
+                status_df["call_status"]
+                .value_counts()
+                .reset_index()
+            )
+
+            status_counts.columns = [
+                "Call Status",
+                "Number of Calls"
+            ]
+
+            # Display summary table
+            st.dataframe(
+                status_counts,
+                use_container_width=True
+            )
+
+
+            # Display chart
+            st.bar_chart(
+                status_counts.set_index(
+                    "Call Status"
+                )
+            )
+
+
+    except Exception as e:
+
+        st.error(
+            f"Error loading call status breakdown: {e}"
+        )
