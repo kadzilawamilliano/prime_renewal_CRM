@@ -14,99 +14,122 @@ from utils.whatsapp import (
     whatsapp_link,
     call_link
 )
+
+
 def show_client_management(df):
+
     st.header(":material/groups: Client Management")
+
 
     search = st.text_input(
         "Search Client"
     )
 
+
     if search:
 
         filtered = df[
-
             df.astype(str)
-
             .apply(
-
                 lambda x:
-
-                x.str.contains(
-
-                    search,
-
-                    case=False,
-
-                    na=False
-
-                ).any(),
-
+                    x.str.contains(
+                        search,
+                        case=False,
+                        na=False
+                    ).any(),
                 axis=1
-
             )
-
         ]
 
     else:
 
         filtered = df
 
+
     if filtered.empty:
 
-        st.warning("Client not found.")
+        st.warning(
+            "Client not found."
+        )
 
         return
 
-    client = st.selectbox(
+
+
+    client_name = st.selectbox(
 
         "Select Client",
 
         filtered["Policy Holder"]
-
         .dropna()
-
         .unique()
 
     )
 
+
     client = filtered[
 
-        filtered["Policy Holder"] == client
+        filtered["Policy Holder"] == client_name
 
     ].iloc[0]
+
+
+
     st.divider()
 
-    st.subheader(":material/person: Client Profile")
+
+    st.subheader(
+        ":material/person: Client Profile"
+    )
+
 
     left, right = st.columns(2)
 
+
     with left:
 
-        st.info(client["Policy Number"])
+        st.info(
+            client["Policy Number"]
+        )
 
-        st.info(client["Policy Holder"])
+        st.info(
+            client["Policy Holder"]
+        )
 
-        st.info(client["Vehicle Registration"])
+        st.info(
+            client["Vehicle Registration"]
+        )
+
 
     with right:
 
-        st.info(client["Premium"])
+        st.info(
+            client["Premium"]
+        )
 
-        st.info(client["Commencement Date"])
+        st.info(
+            client["Commencement Date"]
+        )
 
-        st.info(client["Renewal Date"])
+        st.info(
+            client["Renewal Date"]
+        )
 
-        local_phone, whatsapp_phone = format_phone(
+
+
+    local_phone, whatsapp_phone = format_phone(
 
         client["Phone Number"]
 
     )
+
 
     expiry = get_expiry_date(
 
         client["Renewal Date"]
 
     )
+
 
     message = whatsapp_message(
 
@@ -118,6 +141,7 @@ def show_client_management(df):
 
     )
 
+
     whatsapp_url = whatsapp_link(
 
         whatsapp_phone,
@@ -126,15 +150,20 @@ def show_client_management(df):
 
     )
 
+
     call_url = call_link(
 
         local_phone
 
     )
 
+
+
     st.divider()
 
+
     c1, c2 = st.columns(2)
+
 
     with c1:
 
@@ -146,6 +175,7 @@ def show_client_management(df):
 
         )
 
+
     with c2:
 
         st.link_button(
@@ -155,13 +185,19 @@ def show_client_management(df):
             whatsapp_url
 
         )
+
+
+
     st.divider()
+
 
     st.subheader(
 
         ":material/edit_note: Call Outcome"
 
     )
+
+
 
     call_status = st.selectbox(
 
@@ -193,11 +229,15 @@ def show_client_management(df):
 
     )
 
+
+
     feedback = st.text_area(
 
         "Feedback"
 
     )
+
+
 
     follow_up = st.date_input(
 
@@ -206,6 +246,8 @@ def show_client_management(df):
         datetime.today()
 
     )
+
+
 
     renewed = st.selectbox(
 
@@ -220,24 +262,42 @@ def show_client_management(df):
         ]
 
     )
-    whatsapp_status = st.selectbox(
-    "WhatsApp Status",
-    [
-        "Not Checked",
-        "Message Sent",
-        "No WhatsApp",
-        "Failed"
-    ]
-)
 
-if st.button(
+
+
+    whatsapp_status = st.selectbox(
+
+        "WhatsApp Status",
+
+        [
+
+            "Not Checked",
+
+            "Message Sent",
+
+            "No WhatsApp",
+
+            "Failed"
+
+        ]
+
+    )
+
+
+
+    st.divider()
+
+
+
+    if st.button(
 
         ":material/save: Save Record",
 
         use_container_width=True
 
     ):
-        
+
+
         save_call_record(
 
             policy_number=client["Policy Number"],
@@ -255,9 +315,11 @@ if st.button(
             next_follow_up=follow_up,
 
             renewed=renewed,
+
             whatsapp_status=whatsapp_status
 
         )
+
 
         st.success(
 
@@ -265,61 +327,85 @@ if st.button(
 
         )
 
-        st.rerun()
-st.divider()
 
-st.subheader(
+        st.rerun()
+
+
+
+    st.divider()
+
+
+    st.subheader(
 
         ":material/history: Client Timeline"
 
     )
 
-history = get_client_history(
+
+    history = get_client_history(
 
         client["Policy Number"]
 
-
     )
 
-if history.empty:
+
+
+    if history.empty:
+
 
         st.info(
 
             "No activities yet."
 
         )
-else:
+
+
+    else:
+
 
         for _, row in history.iterrows():
 
+
             with st.container(border=True):
 
+
                 st.write(
 
-                    row["call_date"]
+                    f"📅 {row['call_date']}"
 
                 )
 
+
                 st.write(
 
-                    row["call_status"]
+                    f"Status: {row['call_status']}"
 
                 )
 
+
                 st.write(
 
-                    row["feedback"]
+                    f"Feedback: {row['feedback']}"
 
                 )
 
+
                 st.write(
 
-                    row["next_follow_up"]
+                    f"Next Follow Up: {row['next_follow_up']}"
 
                 )
 
+
                 st.write(
 
-                    row["renewed"]
+                    f"Renewed: {row['renewed']}"
+
+                )
+
+
+                st.write(
+
+                    f"WhatsApp: {row['whatsapp_status']}"
 
                 )
