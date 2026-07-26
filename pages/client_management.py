@@ -274,7 +274,7 @@ st.subheader(
 
     )
 
-    history = get_client_history(
+history = get_client_history(
 
         client["Policy Number"]
 
