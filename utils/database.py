@@ -16,6 +16,7 @@ def save_call_record(
     feedback,
     next_follow_up,
     renewed,
+    whatsapp_status,
     username="Milliano"
 ):
 
