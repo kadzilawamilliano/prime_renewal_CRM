@@ -280,7 +280,7 @@ history = get_client_history(
 
     )
 
-    if history.empty:
+if history.empty:
 
         st.info(
 
