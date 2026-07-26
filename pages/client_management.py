@@ -229,8 +229,8 @@ def show_client_management(df):
         "Failed"
     ]
 )
-st.write("Current WhatsApp Status:", whatsapp_status)
-if st.button(
+  st.write("Current WhatsApp Status:", whatsapp_status)
+ if st.button(
 
         ":material/save: Save Record",
 
