@@ -287,8 +287,7 @@ if history.empty:
             "No activities yet."
 
         )
-
-    else:
+else:
 
         for _, row in history.iterrows():
 
