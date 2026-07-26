@@ -236,7 +236,7 @@ def show_client_management(df):
         use_container_width=True
 
     ):
-
+        st.write("Selected WhatsApp Status:", whatsapp_status)
         save_call_record(
 
             policy_number=client["Policy Number"],
