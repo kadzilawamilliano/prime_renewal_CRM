@@ -254,7 +254,7 @@ def show_client_management(df):
             next_follow_up=follow_up,
 
             renewed=renewed,
-            whatsapp_status= whatsapp_status
+            "whatsapp_status": whatsapp_status
 
         )
 
