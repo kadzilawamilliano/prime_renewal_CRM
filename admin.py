@@ -1,8 +1,15 @@
 import streamlit as st
 import pandas as pd
 from supabase_client import supabase
+
+
 def show(df):
+
     st.title(":material/admin_panel_settings: Admin Panel")
+
+    # =====================================
+    # SYSTEM STATUS
+    # =====================================
 
     st.divider()
 
@@ -11,83 +18,74 @@ def show(df):
     try:
 
         response = (
-        supabase
-        .table("call_logs")
-        .select("*", count="exact")
-        .execute()
+            supabase
+            .table("call_logs")
+            .select("*", count="exact")
+            .execute()
+        )
+
+        total_logs = response.count
+
+        st.success("🟢 Supabase Connected")
+        st.info(f"Total Call Logs: {total_logs}")
+
+    except Exception:
+
+        st.error("🔴 Supabase Connection Failed")
+
+    # =====================================
+    # PORTFOLIO MANAGEMENT
+    # =====================================
+
+    st.divider()
+
+    st.subheader(":material/upload_file: Portfolio Management")
+
+    uploaded_portfolio = st.file_uploader(
+        "Upload New Motor Portfolio",
+        type=["xlsx"]
     )
-
-    total_logs = response.count
-
-    st.success("Supabase Connected")
-
-    st.info(f"Total Call Logs : {total_logs}")
-
-        except:
-
-         st.error("Supabase Connection Failed")
-     st.divider()
-
-     st.subheader(":material/upload_file: Portfolio Management")
-
-      uploaded_portfolio = st.file_uploader(
-
-    "Upload New Motor Portfolio",
-
-    type=["xlsx"]
-
-)
 
     if uploaded_portfolio:
 
         portfolio = pd.read_excel(uploaded_portfolio)
 
-        st.success(
+        st.success(f"{len(portfolio)} policies loaded.")
 
-        f"{len(portfolio)} policies loaded."
-
-    )
-
-        st.dataframe(
-
-        portfolio.head()
-
-    )
+        st.dataframe(portfolio.head())
 
         st.info(
+            "This portfolio can replace the existing renewal portfolio after validation."
+        )
 
-        "This portfolio can replace the existing renewal portfolio after validation."
+    # =====================================
+    # DATA MANAGEMENT
+    # =====================================
 
-    )
     st.divider()
 
     st.subheader(":material/download: Data Management")
 
-response = (
+    response = (
+        supabase
+        .table("call_logs")
+        .select("*")
+        .execute()
+    )
 
-    supabase
+    logs = pd.DataFrame(response.data)
 
-    .table("call_logs")
+    st.download_button(
+        "Download Call Logs",
+        logs.to_csv(index=False),
+        file_name="call_logs.csv",
+        mime="text/csv"
+    )
 
-    .select("*")
+    # =====================================
+    # SYSTEM INFORMATION
+    # =====================================
 
-    .execute()
-
-)
-
-logs = pd.DataFrame(response.data)
-
-   st.download_button(
-
-     "Download Call Logs",
-
-      logs.to_csv(index=False),
-
-    file_name="call_logs.csv",
-
-    mime="text/csv"
-
-)
     st.divider()
 
     st.subheader(":material/info: System Information")
@@ -99,4 +97,3 @@ logs = pd.DataFrame(response.data)
     st.write("Database : Supabase")
 
     st.write("Application : Motor Renewal CRM")
-  
