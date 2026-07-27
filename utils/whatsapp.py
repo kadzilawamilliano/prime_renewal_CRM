@@ -71,9 +71,9 @@ My name is Milliano Kadzilawa from Prime Insurance Company Limited.
 
 This is a friendly reminder that your motor insurance policy for vehicle {vehicle} is expected to expire on {expiry_date}.
 
-You can renew your policy through any Prime Insurance branch or our authorised agents.
+We kindly encourage you to renew your insurance through our agents or visit our office directly for assistance.
 
-Thank you for choosing Prime Insurance Company.
+Thank you for trusting Prime Insurance Company.
 
 """
 
