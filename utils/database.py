@@ -69,18 +69,44 @@ def get_client_history(policy_number):
 # =====================================
 # ALL CALL LOGS
 # =====================================
-
 def get_all_call_logs():
 
-    response = (
-        supabase
-        .table("call_logs")
-        .select("*")
-        .order("call_date", desc=True)
-        .execute()
-    )
+    all_logs = []
 
-    return pd.DataFrame(response.data)
+    start = 0
+
+    page_size = 1000
+
+    while True:
+
+        response = (
+            supabase
+            .table("call_logs")
+            .select("*")
+            .order("call_date", desc=True)
+            .range(start, start + page_size - 1)
+            .execute()
+        )
+
+        if not response.data:
+            break
+
+        all_logs.extend(response.data)
+
+        if len(response.data) < page_size:
+            break
+
+        start += page_size
+
+    df = pd.DataFrame(all_logs)
+
+    if not df.empty and "call_date" in df.columns:
+        df["call_date"] = pd.to_datetime(
+            df["call_date"],
+            errors="coerce"
+        )
+
+    return df
 
 
 # =====================================
