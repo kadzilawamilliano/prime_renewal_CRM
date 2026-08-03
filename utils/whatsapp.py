@@ -44,7 +44,7 @@ def get_expiry_date(renewal_date):
 
     )
 
-    expiry_date = renewal_date - pd.Timedelta(days=1)
+    expiry_date = renewal_date # - pd.Timedelta(days=1)
 
     return expiry_date.strftime("%d %B %Y")
 
