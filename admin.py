@@ -119,7 +119,6 @@ def show(df):
         "Call Date To"
     )
 
-
     # Call Status filter
 
     call_status_filter = st.selectbox(
@@ -137,7 +136,6 @@ def show(df):
         ]
     )
 
-
     # WhatsApp Status filter
 
     whatsapp_filter = st.selectbox(
@@ -151,6 +149,10 @@ def show(df):
         ]
     )
 
+    # Convert dates to full-day datetime range
+
+    from_datetime = f"{from_date}T00:00:00"
+    to_datetime = f"{to_date}T23:59:59"
 
     # Build query
 
@@ -158,10 +160,11 @@ def show(df):
         supabase
         .table("call_logs")
         .select("*")
-        .gte("call_date", str(from_date))
-        .lte("call_date", str(to_date))
+        .gte("call_date", from_datetime)
+        .lte("call_date", to_datetime)
     )
 
+    # Apply Call Status filter
 
     if call_status_filter != "All":
 
@@ -170,6 +173,7 @@ def show(df):
             call_status_filter
         )
 
+    # Apply WhatsApp Status filter
 
     if whatsapp_filter != "All":
 
@@ -178,27 +182,26 @@ def show(df):
             whatsapp_filter
         )
 
+    # Execute query
 
     response = query.execute()
 
     logs = pd.DataFrame(response.data)
 
+    # Show number of matching records
 
     st.info(
         f"Matching Records: {len(logs)}"
     )
 
+    # Download button
 
     if not logs.empty:
 
         st.download_button(
-            "📥 Download Call Logs",
+            "📥 Download Filtered Call Logs",
             logs.to_csv(index=False),
-            file_name=(
-                f"call_logs_"
-                f"{from_date}_"
-                f"to_{to_date}.csv"
-            ),
+            file_name=f"call_logs_{from_date}_to_{to_date}.csv",
             mime="text/csv"
         )
 
@@ -206,7 +209,7 @@ def show(df):
 
         st.warning(
             "No call logs found for the selected filters."
-        )
+    )
 
     # =====================================
     # SYSTEM INFORMATION
