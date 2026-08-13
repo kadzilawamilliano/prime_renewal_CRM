@@ -172,7 +172,7 @@ def show(df):
             # HIGH PRIORITY
             # ==============================
 
-            high_priority = follow_df[
+        high_priority = follow_df[
                 (
                     follow_df["call_status"]
                     == "Not Reachable"
