@@ -165,6 +165,10 @@ def show(df):
     # SECTION 4
     # FOLLOW-UP PRIORITY LIST
     # =====================================
+        # =====================================
+    # SECTION 4
+    # FOLLOW-UP PRIORITY LIST
+    # =====================================
 
     st.divider()
 
@@ -175,7 +179,52 @@ def show(df):
     try:
 
         # ---------------------------------
-        # Fetch call logs
+        # DATE FILTERS
+        # ---------------------------------
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            follow_from_date = st.date_input(
+                "Follow-Up Call Date From",
+                key="follow_from_date"
+            )
+
+        with col2:
+
+            follow_to_date = st.date_input(
+                "Follow-Up Call Date To",
+                key="follow_to_date"
+            )
+
+        # ---------------------------------
+        # VALIDATE DATE RANGE
+        # ---------------------------------
+
+        if follow_from_date > follow_to_date:
+
+            st.error(
+                "⚠️ 'Call Date From' cannot be later "
+                "than 'Call Date To'."
+            )
+
+            st.stop()
+
+        # ---------------------------------
+        # FULL DAY DATETIME RANGE
+        # ---------------------------------
+
+        follow_from_datetime = (
+            f"{follow_from_date}T00:00:00"
+        )
+
+        follow_to_datetime = (
+            f"{follow_to_date}T23:59:59"
+        )
+
+        # ---------------------------------
+        # FETCH FOLLOW-UP RECORDS
         # ---------------------------------
 
         all_followups = []
@@ -189,6 +238,14 @@ def show(df):
                 supabase
                 .table("call_logs")
                 .select("*")
+                .gte(
+                    "call_date",
+                    follow_from_datetime
+                )
+                .lte(
+                    "call_date",
+                    follow_to_datetime
+                )
                 .range(
                     start,
                     start + page_size - 1
@@ -208,24 +265,29 @@ def show(df):
 
             start += page_size
 
+        # ---------------------------------
+        # CONVERT TO DATAFRAME
+        # ---------------------------------
+
         follow_df = pd.DataFrame(
             all_followups
         )
 
         # ---------------------------------
-        # Check data
+        # CHECK DATA
         # ---------------------------------
 
         if follow_df.empty:
 
             st.info(
-                "No call records found."
+                "No call records found for the "
+                "selected period."
             )
 
         else:
 
             # ---------------------------------
-            # Clean Call Status
+            # CLEAN CALL STATUS
             # ---------------------------------
 
             follow_df["call_status"] = (
@@ -236,7 +298,7 @@ def show(df):
             )
 
             # ---------------------------------
-            # Clean WhatsApp Status
+            # CLEAN WHATSAPP STATUS
             # ---------------------------------
 
             follow_df["whatsapp_status"] = (
@@ -247,7 +309,7 @@ def show(df):
             )
 
             # ---------------------------------
-            # Standardise Call Status
+            # STANDARDISE CALL STATUS
             # ---------------------------------
 
             follow_df["call_status"] = (
@@ -325,7 +387,7 @@ def show(df):
             low_priority["Priority"] = "LOW"
 
             # =================================
-            # COMBINE FOLLOW-UPS
+            # COMBINE PRIORITY LIST
             # =================================
 
             priority_list = pd.concat(
@@ -337,16 +399,21 @@ def show(df):
                 ignore_index=True
             )
 
+            # =================================
+            # DISPLAY RESULTS
+            # =================================
+
             if priority_list.empty:
 
                 st.info(
-                    "No follow-up customers available."
+                    "No priority follow-ups found "
+                    "for the selected period."
                 )
 
             else:
 
                 # ---------------------------------
-                # Priority order
+                # PRIORITY ORDER
                 # ---------------------------------
 
                 priority_order = {
@@ -367,12 +434,51 @@ def show(df):
                 )
 
                 # ---------------------------------
-                # Select available columns
+                # SUMMARY
+                # ---------------------------------
+
+                high_count = len(high_priority)
+
+                medium_count = len(medium_priority)
+
+                low_count = len(low_priority)
+
+                st.info(
+                    f"Follow-ups found: "
+                    f"{len(priority_list)}"
+                )
+
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+
+                    st.metric(
+                        "🔴 High Priority",
+                        high_count
+                    )
+
+                with col2:
+
+                    st.metric(
+                        "🟠 Medium Priority",
+                        medium_count
+                    )
+
+                with col3:
+
+                    st.metric(
+                        "🟢 Low Priority",
+                        low_count
+                    )
+
+                # ---------------------------------
+                # DISPLAY TABLE
                 # ---------------------------------
 
                 display_columns = [
                     "policy_number",
                     "policy_holder",
+                    "call_date",
                     "call_status",
                     "whatsapp_status",
                     "feedback",
@@ -380,17 +486,13 @@ def show(df):
                     "Priority"
                 ]
 
-                # Only display columns that exist
+                # Only use columns that exist
 
                 display_columns = [
                     column
                     for column in display_columns
                     if column in priority_list.columns
                 ]
-
-                # ---------------------------------
-                # Display follow-up table
-                # ---------------------------------
 
                 st.dataframe(
                     priority_list[
@@ -401,7 +503,7 @@ def show(df):
                 )
 
                 # ---------------------------------
-                # Download Follow-Up List
+                # DOWNLOAD
                 # ---------------------------------
 
                 csv = priority_list.to_csv(
@@ -412,7 +514,9 @@ def show(df):
                     "📥 Download Follow-Up List",
                     csv,
                     file_name=(
-                        "follow_up_priority_list.csv"
+                        f"follow_up_"
+                        f"{follow_from_date}_"
+                        f"to_{follow_to_date}.csv"
                     ),
                     mime="text/csv"
                 )
@@ -421,4 +525,4 @@ def show(df):
 
         st.error(
             f"Error loading follow-up list: {e}"
-        )
+                )
