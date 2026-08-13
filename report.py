@@ -5,30 +5,72 @@ from supabase_client import supabase
 
 def show(df):
 
-    st.title(":material/analytics: Reports")
+        # =====================================
+    # CALL STATUS BREAKDOWN
+    # =====================================
 
     st.divider()
 
-    st.subheader(":material/pie_chart: Call Status Breakdown")
+    st.subheader(
+        ":material/pie_chart: Call Status Breakdown"
+    )
 
     try:
 
-        response = (
-            supabase
-            .table("call_logs")
-            .select("call_status")
-            .execute()
-        )
+        # ---------------------------------
+        # Fetch ALL call logs
+        # ---------------------------------
 
-        status_df = pd.DataFrame(response.data)
+        all_logs = []
+
+        page_size = 1000
+        start = 0
+
+        while True:
+
+            response = (
+                supabase
+                .table("call_logs")
+                .select("call_status")
+                .range(
+                    start,
+                    start + page_size - 1
+                )
+                .execute()
+            )
+
+            batch = response.data
+
+            if not batch:
+                break
+
+            all_logs.extend(batch)
+
+            if len(batch) < page_size:
+                break
+
+            start += page_size
+
+
+        # ---------------------------------
+        # Convert to DataFrame
+        # ---------------------------------
+
+        status_df = pd.DataFrame(all_logs)
+
 
         if status_df.empty:
 
-            st.warning("No call status records found.")
+            st.warning(
+                "No call status records found."
+            )
 
         else:
 
-            # Clean call status values
+            # ---------------------------------
+            # Clean call status
+            # ---------------------------------
+
             status_df["call_status"] = (
                 status_df["call_status"]
                 .fillna("Unknown")
@@ -36,30 +78,87 @@ def show(df):
                 .str.strip()
             )
 
+
+            # ---------------------------------
+            # Standardise status names
+            # ---------------------------------
+
+            status_df["call_status"] = (
+                status_df["call_status"]
+                .replace(
+                    {
+                        "Not reachable": "Not Reachable",
+                        "not reachable": "Not Reachable",
+                        "NOT REACHABLE": "Not Reachable",
+
+                        "will renew": "Will Renew",
+                        "WILL RENEW": "Will Renew",
+
+                        "no answer": "No Answer",
+                        "NO ANSWER": "No Answer",
+
+                        "busy": "Busy",
+                        "BUSY": "Busy",
+
+                        "wrong number": "Wrong Number",
+                        "WRONG NUMBER": "Wrong Number",
+
+                        "pending decision": "Pending Decision",
+                        "PENDING DECISION": "Pending Decision"
+                    }
+                )
+            )
+
+
+            # ---------------------------------
             # Count each call status
+            # ---------------------------------
+
             status_counts = (
                 status_df["call_status"]
                 .value_counts()
                 .reset_index()
             )
 
+
             status_counts.columns = [
                 "Call Status",
                 "Number of Calls"
             ]
 
-            # Display summary table
-            st.dataframe(
-                status_counts,
-                use_container_width=True
+
+            # ---------------------------------
+            # Display total calls
+            # ---------------------------------
+
+            st.info(
+                f"Total Call Records Analysed: "
+                f"{len(status_df)}"
             )
 
 
+            # ---------------------------------
+            # Display table
+            # ---------------------------------
+
+            st.dataframe(
+                status_counts,
+                use_container_width=True,
+                hide_index=True
+            )
+
+
+            # ---------------------------------
             # Display chart
+            # ---------------------------------
+
+            chart_data = (
+                status_counts
+                .set_index("Call Status")
+            )
+
             st.bar_chart(
-                status_counts.set_index(
-                    "Call Status"
-                )
+                chart_data
             )
 
 
@@ -68,54 +167,6 @@ def show(df):
         st.error(
             f"Error loading call status breakdown: {e}"
         )
-            # =====================================
-    # FOLLOW-UP PRIORITY LIST
-    # =====================================
-
-    st.divider()
-
-    st.subheader(":material/priority_high: Follow-Up Priority List")
-
-
-    try:
-
-        response = (
-            supabase
-            .table("call_logs")
-            .select("*")
-            .execute()
-        )
-
-
-        follow_df = pd.DataFrame(response.data)
-
-
-        if follow_df.empty:
-
-            st.warning(
-                "No follow-up records found."
-            )
-
-        else:
-
-
-            # Clean data
-
-            follow_df["call_status"] = (
-                follow_df["call_status"]
-                .fillna("Unknown")
-                .astype(str)
-                .str.strip()
-            )
-
-
-            follow_df["whatsapp_status"] = (
-                follow_df["whatsapp_status"]
-                .fillna("Not Checked")
-                .astype(str)
-                .str.strip()
-            )
-
 
             # ==============================
             # HIGH PRIORITY
