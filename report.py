@@ -5,7 +5,8 @@ from supabase_client import supabase
 
 def show(df):
 
-        # =====================================
+    # =====================================
+    # SECTION 3
     # CALL STATUS BREAKDOWN
     # =====================================
 
@@ -51,13 +52,11 @@ def show(df):
 
             start += page_size
 
-
         # ---------------------------------
         # Convert to DataFrame
         # ---------------------------------
 
         status_df = pd.DataFrame(all_logs)
-
 
         if status_df.empty:
 
@@ -77,7 +76,6 @@ def show(df):
                 .astype(str)
                 .str.strip()
             )
-
 
             # ---------------------------------
             # Standardise status names
@@ -109,7 +107,6 @@ def show(df):
                 )
             )
 
-
             # ---------------------------------
             # Count each call status
             # ---------------------------------
@@ -120,12 +117,10 @@ def show(df):
                 .reset_index()
             )
 
-
             status_counts.columns = [
                 "Call Status",
                 "Number of Calls"
             ]
-
 
             # ---------------------------------
             # Display total calls
@@ -136,7 +131,6 @@ def show(df):
                 f"{len(status_df)}"
             )
 
-
             # ---------------------------------
             # Display table
             # ---------------------------------
@@ -146,7 +140,6 @@ def show(df):
                 use_container_width=True,
                 hide_index=True
             )
-
 
             # ---------------------------------
             # Display chart
@@ -161,18 +154,127 @@ def show(df):
                 chart_data
             )
 
-
     except Exception as e:
 
         st.error(
             f"Error loading call status breakdown: {e}"
         )
 
-            # ==============================
-            # HIGH PRIORITY
-            # ==============================
 
-        high_priority = follow_df[
+    # =====================================
+    # SECTION 4
+    # FOLLOW-UP PRIORITY LIST
+    # =====================================
+
+    st.divider()
+
+    st.subheader(
+        ":material/priority_high: Follow-Up Priority List"
+    )
+
+    try:
+
+        # ---------------------------------
+        # Fetch call logs
+        # ---------------------------------
+
+        all_followups = []
+
+        page_size = 1000
+        start = 0
+
+        while True:
+
+            response = (
+                supabase
+                .table("call_logs")
+                .select("*")
+                .range(
+                    start,
+                    start + page_size - 1
+                )
+                .execute()
+            )
+
+            batch = response.data
+
+            if not batch:
+                break
+
+            all_followups.extend(batch)
+
+            if len(batch) < page_size:
+                break
+
+            start += page_size
+
+        follow_df = pd.DataFrame(
+            all_followups
+        )
+
+        # ---------------------------------
+        # Check data
+        # ---------------------------------
+
+        if follow_df.empty:
+
+            st.info(
+                "No call records found."
+            )
+
+        else:
+
+            # ---------------------------------
+            # Clean Call Status
+            # ---------------------------------
+
+            follow_df["call_status"] = (
+                follow_df["call_status"]
+                .fillna("Unknown")
+                .astype(str)
+                .str.strip()
+            )
+
+            # ---------------------------------
+            # Clean WhatsApp Status
+            # ---------------------------------
+
+            follow_df["whatsapp_status"] = (
+                follow_df["whatsapp_status"]
+                .fillna("Not Checked")
+                .astype(str)
+                .str.strip()
+            )
+
+            # ---------------------------------
+            # Standardise Call Status
+            # ---------------------------------
+
+            follow_df["call_status"] = (
+                follow_df["call_status"]
+                .replace(
+                    {
+                        "Not reachable": "Not Reachable",
+                        "not reachable": "Not Reachable",
+                        "NOT REACHABLE": "Not Reachable",
+
+                        "will renew": "Will Renew",
+                        "WILL RENEW": "Will Renew",
+
+                        "no answer": "No Answer",
+                        "NO ANSWER": "No Answer",
+
+                        "pending decision": "Pending Decision",
+                        "PENDING DECISION": "Pending Decision"
+                    }
+                )
+            )
+
+            # =================================
+            # HIGH PRIORITY
+            # =================================
+
+            high_priority = follow_df[
                 (
                     follow_df["call_status"]
                     == "Not Reachable"
@@ -184,14 +286,11 @@ def show(df):
                 )
             ].copy()
 
-
             high_priority["Priority"] = "HIGH"
 
-
-
-            # ==============================
+            # =================================
             # MEDIUM PRIORITY
-            # ==============================
+            # =================================
 
             medium_priority = follow_df[
                 (
@@ -212,26 +311,22 @@ def show(df):
                 )
             ].copy()
 
-
             medium_priority["Priority"] = "MEDIUM"
 
-
-
-            # ==============================
+            # =================================
             # LOW PRIORITY
-            # ==============================
+            # =================================
 
             low_priority = follow_df[
                 follow_df["call_status"]
                 == "Will Renew"
             ].copy()
 
-
             low_priority["Priority"] = "LOW"
 
-
-
-            # Combine all follow-ups
+            # =================================
+            # COMBINE FOLLOW-UPS
+            # =================================
 
             priority_list = pd.concat(
                 [
@@ -242,7 +337,6 @@ def show(df):
                 ignore_index=True
             )
 
-
             if priority_list.empty:
 
                 st.info(
@@ -251,8 +345,9 @@ def show(df):
 
             else:
 
-
-                # Arrange HIGH first
+                # ---------------------------------
+                # Priority order
+                # ---------------------------------
 
                 priority_order = {
                     "HIGH": 1,
@@ -260,12 +355,10 @@ def show(df):
                     "LOW": 3
                 }
 
-
                 priority_list["Order"] = (
                     priority_list["Priority"]
                     .map(priority_order)
                 )
-
 
                 priority_list = (
                     priority_list
@@ -273,40 +366,59 @@ def show(df):
                     .drop(columns=["Order"])
                 )
 
+                # ---------------------------------
+                # Select available columns
+                # ---------------------------------
+
+                display_columns = [
+                    "policy_number",
+                    "policy_holder",
+                    "call_status",
+                    "whatsapp_status",
+                    "feedback",
+                    "next_follow_up",
+                    "Priority"
+                ]
+
+                # Only display columns that exist
+
+                display_columns = [
+                    column
+                    for column in display_columns
+                    if column in priority_list.columns
+                ]
+
+                # ---------------------------------
+                # Display follow-up table
+                # ---------------------------------
 
                 st.dataframe(
                     priority_list[
-                        [
-                            "policy_number",
-                            "policy_holder",
-                            "call_status",
-                            "whatsapp_status",
-                            "feedback",
-                            "next_follow_up",
-                            "Priority"
-                        ]
+                        display_columns
                     ],
-                    use_container_width=True
+                    use_container_width=True,
+                    hide_index=True
                 )
 
-
-                # Download CSV
+                # ---------------------------------
+                # Download Follow-Up List
+                # ---------------------------------
 
                 csv = priority_list.to_csv(
                     index=False
                 )
 
-
                 st.download_button(
                     "📥 Download Follow-Up List",
                     csv,
-                    file_name="follow_up_priority_list.csv",
+                    file_name=(
+                        "follow_up_priority_list.csv"
+                    ),
                     mime="text/csv"
                 )
-
 
     except Exception as e:
 
         st.error(
             f"Error loading follow-up list: {e}"
-                )
+        )
