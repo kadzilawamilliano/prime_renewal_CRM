@@ -348,9 +348,7 @@ whatsapp_status = st.selectbox(
     index=whatsapp_options.index(default_whatsapp)
 
 )
-
-
-    st.divider()
+st.divider()
 
 
 
