@@ -16,181 +16,242 @@ from utils.whatsapp import (
 )
 
 
+        )
+
+        
 def show_client_management(df):
 
     st.header(":material/groups: Client Management")
 
+    # -----------------------------------
+    # SEARCH
+    # -----------------------------------
 
     search = st.text_input(
-        "Search Client"
+        "🔍 Search Client or Vehicle Registration"
     )
 
+    # -----------------------------------
+    # DATE FILTER
+    # -----------------------------------
 
-    if search:
+    today = pd.Timestamp.today().normalize()
 
-        filtered = df[
-            df.astype(str)
-            .apply(
-                lambda x:
-                    x.str.contains(
-                        search,
-                        case=False,
-                        na=False
-                    ).any(),
-                axis=1
+    df = df.copy()
+
+    df["Renewal Date"] = pd.to_datetime(
+        df["Renewal Date"],
+        errors="coerce"
+    )
+
+    period = st.selectbox(
+        "Reminder Period",
+        [
+            "Today",
+            "Tomorrow",
+            "Next 7 Days",
+            "All"
+        ]
+    )
+
+    if period == "Today":
+
+        queue = df[
+            df["Renewal Date"].dt.normalize()
+            == today
+        ]
+
+    elif period == "Tomorrow":
+
+        queue = df[
+            df["Renewal Date"].dt.normalize()
+            ==
+            today + pd.Timedelta(days=1)
+        ]
+
+    elif period == "Next 7 Days":
+
+        queue = df[
+            (
+                df["Renewal Date"].dt.normalize()
+                >= today
+            )
+            &
+            (
+                df["Renewal Date"].dt.normalize()
+                <= today + pd.Timedelta(days=7)
             )
         ]
 
     else:
 
-        filtered = df
+        queue = df.copy()
 
+    queue = queue.reset_index(drop=True)
 
-    if filtered.empty:
+    # -----------------------------------
+    # SEARCH MODE
+    # -----------------------------------
+
+    if search:
+
+        queue = queue[
+            queue.astype(str)
+            .apply(
+                lambda x:
+                x.str.contains(
+                    search,
+                    case=False,
+                    na=False
+                ).any(),
+                axis=1
+            )
+        ]
+
+    if queue.empty:
 
         st.warning(
-            "Client not found."
+            "No client found."
         )
 
         return
 
+    # -----------------------------------
+    # SESSION STATE
+    # -----------------------------------
 
+    if "current_client" not in st.session_state:
 
-    client_name = st.selectbox(
+        st.session_state.current_client = 0
 
-        "Select Client",
+    if (
+        st.session_state.current_client
+        >= len(queue)
+    ):
 
-        filtered["Policy Holder"]
-        .dropna()
-        .unique()
+        st.session_state.current_client = 0
+
+    # -----------------------------------
+    # START FROM CLIENT
+    # -----------------------------------
+
+    start = st.selectbox(
+
+        "Start From Client",
+
+        range(
+            1,
+            len(queue) + 1
+        ),
+
+        index=st.session_state.current_client
 
     )
 
+    if (
+        start - 1
+        != st.session_state.current_client
+    ):
 
-    client = filtered[
+        st.session_state.current_client = start - 1
 
-        filtered["Policy Holder"] == client_name
+        st.rerun()
 
-    ].iloc[0]
+    index = st.session_state.current_client
 
+    client = queue.iloc[index]
 
+    # -----------------------------------
+    # CLIENT SUMMARY
+    # -----------------------------------
 
     st.divider()
 
-
-    st.subheader(
-        ":material/person: Client Profile"
+    st.info(
+        f"Client {index + 1} of {len(queue)}"
     )
 
+    st.subheader(
+        client["Policy Holder"]
+    )
 
     left, right = st.columns(2)
 
-
     with left:
 
-        st.info(
-            client["Policy Number"]
+        st.write(
+            f"🚗 **Vehicle:** {client['Vehicle Registration']}"
         )
 
-        st.info(
-            client["Policy Holder"]
+        st.write(
+            f"📄 **Policy:** {client['Policy Number']}"
         )
 
-        st.info(
-            client["Vehicle Registration"]
+        st.write(
+            f"📞 **Phone:** {client['Phone Number']}"
         )
-
 
     with right:
 
-        st.info(
-            client["Premium"]
+        st.write(
+            f"📅 **Renewal:** "
+            f"{client['Renewal Date'].strftime('%d %B %Y')}"
         )
 
-        st.info(
-            client["Commencement Date"]
+        st.write(
+            f"💰 **Premium:** {client['Premium']}"
         )
 
-        st.info(
-            client["Renewal Date"]
-        )
-
-
+    # -----------------------------------
+    # ACTION BUTTONS
+    # -----------------------------------
 
     local_phone, whatsapp_phone = format_phone(
-
         client["Phone Number"]
-
     )
-
 
     expiry = get_expiry_date(
-
         client["Renewal Date"]
-
     )
-
 
     message = whatsapp_message(
-
         client["Policy Holder"],
-
         client["Vehicle Registration"],
-
         expiry
-
     )
-
 
     whatsapp_url = whatsapp_link(
-
         whatsapp_phone,
-
         message
-
     )
-
 
     call_url = call_link(
-
         local_phone
-
     )
-
-
 
     st.divider()
 
-
     c1, c2 = st.columns(2)
-
 
     with c1:
 
         st.link_button(
-
             ":material/call: Call Client",
-
-            call_url
-
+            call_url,
+            use_container_width=True
         )
-
 
     with c2:
 
         st.link_button(
-
             ":material/chat: WhatsApp",
-
-            whatsapp_url
-
+            whatsapp_url,
+            use_container_width=True
         )
-
-
 
     st.divider()
 
-
+    
     st.subheader(
 
         ":material/edit_note: Call Outcome"
