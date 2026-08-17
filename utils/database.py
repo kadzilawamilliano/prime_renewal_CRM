@@ -160,3 +160,44 @@ def get_pending_followups():
     )
 
     return pd.DataFrame(response.data)
+
+# =====================================
+# SAVE WHATSAPP REMINDER
+# =====================================
+
+def save_whatsapp_reminder(
+    policy_number,
+    policy_holder,
+    vehicle_registration,
+    premium,
+    username="Milliano"
+):
+
+    data = {
+
+        "policy_number": policy_number,
+
+        "policy_holder": policy_holder,
+
+        "vehicle_registration": vehicle_registration,
+
+        "premium": None if pd.isna(premium) else float(premium),
+
+        "call_date": datetime.now().isoformat(),
+
+        "call_status": "WhatsApp Reminder",
+
+        "feedback": "Renewal reminder sent via WhatsApp",
+
+        "next_follow_up": None,
+
+        "renewed": "No",
+
+        "whatsapp_status": "Message Sent",
+
+        "username": username
+
+    }
+
+
+    supabase.table("call_logs").insert(data).execute()
