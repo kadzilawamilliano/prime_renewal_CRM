@@ -351,8 +351,7 @@ whatsapp_status = st.selectbox(
 st.divider()
 
 
-
-    if st.button(
+if st.button(
 
     ":material/save: Save & Next Client",
 
