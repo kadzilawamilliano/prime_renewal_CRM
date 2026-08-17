@@ -356,44 +356,47 @@ whatsapp_status = st.selectbox(
 
     if st.button(
 
-        ":material/save: Save Record",
+    ":material/save: Save & Next Client",
 
-        use_container_width=True
+    use_container_width=True
 
-    ):
+):
 
+    save_call_record(
 
-        save_call_record(
+        policy_number=client["Policy Number"],
 
-            policy_number=client["Policy Number"],
+        policy_holder=client["Policy Holder"],
 
-            policy_holder=client["Policy Holder"],
+        vehicle_registration=client["Vehicle Registration"],
 
-            vehicle_registration=client["Vehicle Registration"],
+        premium=client["Premium"],
 
-            premium=client["Premium"],
+        call_status=call_status,
 
-            call_status=call_status,
+        feedback=feedback,
 
-            feedback=feedback,
+        next_follow_up=follow_up,
 
-            next_follow_up=follow_up,
+        renewed=renewed,
 
-            renewed=renewed,
+        whatsapp_status=whatsapp_status
 
-            whatsapp_status=whatsapp_status
+    )
 
-        )
+    st.success(
+        "Call record saved successfully."
+    )
 
+    if st.session_state.current_client < len(queue) - 1:
 
-        st.success(
+        st.session_state.current_client += 1
 
-            "Call record saved successfully."
+    else:
 
-        )
+        st.session_state.current_client = 0
 
-
-        st.rerun()
+    st.rerun()
 
 
 
