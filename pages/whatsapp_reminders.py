@@ -54,15 +54,12 @@ def show_whatsapp_reminders(df):
 
         if "Branch" in df.columns:
 
-            branches = [
-                "All"
-            ] + sorted(
+            branches = ["All"] + sorted(
                 df["Branch"]
                 .dropna()
                 .unique()
                 .tolist()
             )
-
 
             branch = st.selectbox(
                 "Branch",
@@ -76,7 +73,7 @@ def show_whatsapp_reminders(df):
 
 
     # -----------------------------------
-    # Date Filtering
+    # Date Filter
     # -----------------------------------
 
     if filter_option == "Today":
@@ -132,10 +129,7 @@ def show_whatsapp_reminders(df):
         ]
 
 
-
-    reminders = reminders.reset_index(
-        drop=True
-    )
+    reminders = reminders.reset_index(drop=True)
 
 
 
@@ -157,10 +151,7 @@ def show_whatsapp_reminders(df):
     # Session State
     # -----------------------------------
 
-    if (
-        "current_whatsapp_client"
-        not in st.session_state
-    ):
+    if "current_whatsapp_client" not in st.session_state:
 
         st.session_state.current_whatsapp_client = 0
 
@@ -175,9 +166,36 @@ def show_whatsapp_reminders(df):
 
 
 
-    index = (
-        st.session_state.current_whatsapp_client
+    # -----------------------------------
+    # Select Starting Client
+    # -----------------------------------
+
+    start_client = st.selectbox(
+
+        "Start From Client",
+
+        range(
+            1,
+            len(reminders) + 1
+        ),
+
+        index=st.session_state.current_whatsapp_client
+
     )
+
+
+    if (
+        start_client - 1
+        != st.session_state.current_whatsapp_client
+    ):
+
+        st.session_state.current_whatsapp_client = start_client - 1
+
+        st.rerun()
+
+
+
+    index = st.session_state.current_whatsapp_client
 
 
     client = reminders.iloc[index]
@@ -198,7 +216,7 @@ def show_whatsapp_reminders(df):
 
 
     # -----------------------------------
-    # Client Details
+    # Client Information
     # -----------------------------------
 
     st.subheader(
@@ -212,23 +230,31 @@ def show_whatsapp_reminders(df):
     with left:
 
         st.write(
-            f"**Vehicle:** {client['Vehicle Registration']}"
+            f"🚗 Vehicle: {client['Vehicle Registration']}"
         )
 
+
         st.write(
-            f"**Policy Number:** {client['Policy Number']}"
+            f"📄 Policy Number: {client['Policy Number']}"
         )
+
+
+        st.write(
+            f"📞 Phone: {client['Phone Number']}"
+        )
+
 
 
     with right:
 
         st.write(
-            f"**Renewal Date:** "
+            f"📅 Renewal Date: "
             f"{client['Renewal Date'].strftime('%d %B %Y')}"
         )
 
+
         st.write(
-            f"**Premium:** {client['Premium']}"
+            f"💰 Premium: {client['Premium']}"
         )
 
 
@@ -238,48 +264,69 @@ def show_whatsapp_reminders(df):
 
 
     # -----------------------------------
-    # WhatsApp Link
+    # WhatsApp
     # -----------------------------------
 
     local_phone, whatsapp_phone = format_phone(
+
         client["Phone Number"]
+
     )
 
 
     expiry = get_expiry_date(
+
         client["Renewal Date"]
+
     )
 
 
     message = whatsapp_message(
+
         client["Policy Holder"],
+
         client["Vehicle Registration"],
+
         expiry
+
     )
 
 
     whatsapp_url = whatsapp_link(
-        whatsapp_phone,
-        message
-    )
 
+        whatsapp_phone,
+
+        message
+
+    )
 
 
     st.link_button(
+
         ":material/chat: Open WhatsApp",
+
         whatsapp_url,
+
         use_container_width=True
+
     )
 
 
 
+    st.divider()
+
+
+
     # -----------------------------------
-    # Mark As Sent
+    # Mark as Sent
     # -----------------------------------
 
     if st.button(
+
         "✅ Mark as Sent",
+
         use_container_width=True
+
     ):
 
 
@@ -297,16 +344,20 @@ def show_whatsapp_reminders(df):
 
 
         st.success(
+
             "WhatsApp reminder saved."
+
         )
 
 
-        if (
-            st.session_state.current_whatsapp_client
-            < len(reminders) - 1
-        ):
+        if index < len(reminders) - 1:
 
             st.session_state.current_whatsapp_client += 1
+
+
+        else:
+
+            st.session_state.current_whatsapp_client = 0
 
 
         st.rerun()
@@ -324,19 +375,18 @@ def show_whatsapp_reminders(df):
     col1, col2 = st.columns(2)
 
 
-
     with col1:
 
         if st.button(
+
             "⬅ Previous",
+
             use_container_width=True
+
         ):
 
 
-            if (
-                st.session_state.current_whatsapp_client
-                > 0
-            ):
+            if index > 0:
 
                 st.session_state.current_whatsapp_client -= 1
 
@@ -347,15 +397,15 @@ def show_whatsapp_reminders(df):
     with col2:
 
         if st.button(
+
             "Next ➡",
+
             use_container_width=True
+
         ):
 
 
-            if (
-                st.session_state.current_whatsapp_client
-                < len(reminders) - 1
-            ):
+            if index < len(reminders) - 1:
 
                 st.session_state.current_whatsapp_client += 1
 
