@@ -15,9 +15,6 @@ from utils.whatsapp import (
     call_link
 )
 
-
-        )
-
         
 def show_client_management(df):
 
