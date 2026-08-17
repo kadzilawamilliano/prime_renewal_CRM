@@ -250,98 +250,104 @@ def show_client_management(df):
     st.divider()
 
     
-    st.subheader(
+    # -----------------------------------
+# CALL OUTCOME
+# -----------------------------------
 
-        ":material/edit_note: Call Outcome"
+st.subheader(
+    ":material/edit_note: Call Outcome"
+)
 
-    )
+call_status = st.selectbox(
 
+    "Call Status",
 
+    [
 
-    call_status = st.selectbox(
+        "No Answer",
 
-        "Call Status",
+        "Busy",
 
-        [
+        "Wrong Number",
 
-            "No Answer",
+        "Will Renew",
 
-            "Busy",
+        "Pending Decision",
 
-            "Wrong Number",
+        "Not Interested",
 
-            "Will Renew",
+        "Renewed Already",
 
-            "Pending Decision",
+        "Not Reachable",
 
-            "Not Interested",
+        "Will Not Renew",
 
-            "Renewed Already",
+        "Invalid Number"
 
-            "Not Reachable",
+    ]
 
-            "Will Not Renew",
+)
 
-            "Invalid Number"
+# -----------------------------------
+# SMART DEFAULTS
+# -----------------------------------
 
-        ]
+default_renewed = "No"
+default_whatsapp = "Not Checked"
 
-    )
+if call_status == "Renewed Already":
 
+    default_renewed = "Yes"
+    default_whatsapp = "Message Sent"
 
+elif call_status == "Wrong Number":
 
-    feedback = st.text_area(
+    default_whatsapp = "No WhatsApp"
 
-        "Feedback"
+elif call_status == "Invalid Number":
 
-    )
+    default_whatsapp = "Failed"
 
+feedback = st.text_area(
+    "Feedback"
+)
 
+follow_up = st.date_input(
+    "Next Follow Up",
+    datetime.today()
+)
 
-    follow_up = st.date_input(
+renewed = st.selectbox(
 
-        "Next Follow Up",
+    "Renewed",
 
-        datetime.today()
+    ["No", "Yes"],
 
-    )
+    index=0 if default_renewed == "No" else 1
 
+)
 
+whatsapp_options = [
 
-    renewed = st.selectbox(
+    "Not Checked",
 
-        "Renewed",
+    "Message Sent",
 
-        [
+    "No WhatsApp",
 
-            "No",
+    "Failed"
 
-            "Yes"
+]
 
-        ]
+whatsapp_status = st.selectbox(
 
-    )
+    "WhatsApp Status",
 
+    whatsapp_options,
 
+    index=whatsapp_options.index(default_whatsapp)
 
-    whatsapp_status = st.selectbox(
-
-        "WhatsApp Status",
-
-        [
-
-            "Not Checked",
-
-            "Message Sent",
-
-            "No WhatsApp",
-
-            "Failed"
-
-        ]
-
-    )
-
+)
 
 
     st.divider()
