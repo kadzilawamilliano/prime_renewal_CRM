@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+
 from utils.database import save_whatsapp_reminder
 
 from utils.whatsapp import (
@@ -15,6 +15,7 @@ def show_whatsapp_reminders(df):
 
     st.header(":material/chat: WhatsApp Reminders")
 
+
     # -----------------------------------
     # Prepare Dates
     # -----------------------------------
@@ -28,11 +29,13 @@ def show_whatsapp_reminders(df):
         errors="coerce"
     )
 
+
     # -----------------------------------
     # Filters
     # -----------------------------------
 
     col1, col2 = st.columns(2)
+
 
     with col1:
 
@@ -46,13 +49,20 @@ def show_whatsapp_reminders(df):
             ]
         )
 
+
     with col2:
 
         if "Branch" in df.columns:
 
-            branches = ["All"] + sorted(
-                df["Branch"].dropna().unique().tolist()
+            branches = [
+                "All"
+            ] + sorted(
+                df["Branch"]
+                .dropna()
+                .unique()
+                .tolist()
             )
+
 
             branch = st.selectbox(
                 "Branch",
@@ -63,38 +73,53 @@ def show_whatsapp_reminders(df):
 
             branch = "All"
 
+
+
     # -----------------------------------
-    # Apply Date Filter
+    # Date Filtering
     # -----------------------------------
 
     if filter_option == "Today":
 
         reminders = df[
-            df["Renewal Date"].dt.normalize() == today
+            df["Renewal Date"]
+            .dt.normalize()
+            == today
         ]
+
 
     elif filter_option == "Tomorrow":
 
         reminders = df[
-            df["Renewal Date"].dt.normalize() ==
+            df["Renewal Date"]
+            .dt.normalize()
+            ==
             today + pd.Timedelta(days=1)
         ]
+
 
     elif filter_option == "Next 7 Days":
 
         reminders = df[
             (
-                df["Renewal Date"].dt.normalize() >= today
-            ) &
+                df["Renewal Date"]
+                .dt.normalize()
+                >= today
+            )
+            &
             (
-                df["Renewal Date"].dt.normalize()
+                df["Renewal Date"]
+                .dt.normalize()
                 <= today + pd.Timedelta(days=7)
             )
         ]
 
+
     else:
 
         reminders = df.copy()
+
+
 
     # -----------------------------------
     # Branch Filter
@@ -106,7 +131,13 @@ def show_whatsapp_reminders(df):
             reminders["Branch"] == branch
         ]
 
-    reminders = reminders.reset_index(drop=True)
+
+
+    reminders = reminders.reset_index(
+        drop=True
+    )
+
+
 
     # -----------------------------------
     # No Clients
@@ -114,47 +145,69 @@ def show_whatsapp_reminders(df):
 
     if reminders.empty:
 
-        st.success("🎉 No reminders found.")
+        st.success(
+            "🎉 No reminders found."
+        )
 
         return
+
+
 
     # -----------------------------------
     # Session State
     # -----------------------------------
 
-    if "current_whatsapp_client" not in st.session_state:
+    if (
+        "current_whatsapp_client"
+        not in st.session_state
+    ):
 
         st.session_state.current_whatsapp_client = 0
 
-    if st.session_state.current_whatsapp_client >= len(reminders):
+
+
+    if (
+        st.session_state.current_whatsapp_client
+        >= len(reminders)
+    ):
 
         st.session_state.current_whatsapp_client = 0
 
-    index = st.session_state.current_whatsapp_client
+
+
+    index = (
+        st.session_state.current_whatsapp_client
+    )
+
 
     client = reminders.iloc[index]
 
-    # -----------------------------------
-    # Statistics
-    # -----------------------------------
 
-    total = len(reminders)
 
-    current = index + 1
+    # -----------------------------------
+    # Progress
+    # -----------------------------------
 
     st.info(
-        f"Client {current} of {total}"
+        f"Client {index + 1} of {len(reminders)}"
     )
 
+
     st.divider()
+
+
 
     # -----------------------------------
     # Client Details
     # -----------------------------------
 
-    st.subheader(client["Policy Holder"])
+    st.subheader(
+        client["Policy Holder"]
+    )
+
 
     left, right = st.columns(2)
+
 
     with left:
 
@@ -165,6 +218,7 @@ def show_whatsapp_reminders(df):
         st.write(
             f"**Policy Number:** {client['Policy Number']}"
         )
+
 
     with right:
 
@@ -177,17 +231,25 @@ def show_whatsapp_reminders(df):
             f"**Premium:** {client['Premium']}"
         )
 
+
+
+    st.divider()
+
+
+
     # -----------------------------------
-    # WhatsApp
+    # WhatsApp Link
     # -----------------------------------
 
     local_phone, whatsapp_phone = format_phone(
         client["Phone Number"]
     )
 
+
     expiry = get_expiry_date(
         client["Renewal Date"]
     )
+
 
     message = whatsapp_message(
         client["Policy Holder"],
@@ -195,48 +257,73 @@ def show_whatsapp_reminders(df):
         expiry
     )
 
-    url = whatsapp_link(
+
+    whatsapp_url = whatsapp_link(
         whatsapp_phone,
         message
     )
 
+
+
     st.link_button(
         ":material/chat: Open WhatsApp",
-        url,
+        whatsapp_url,
         use_container_width=True
     )
 
-    st.divider()
+
+
+    # -----------------------------------
+    # Mark As Sent
+    # -----------------------------------
+
     if st.button(
-    "✅ Mark as Sent",
-    use_container_width=True
-):
-save_whatsapp_reminder(
-
-        policy_number=client["Policy Number"],
-
-        policy_holder=client["Policy Holder"],
-
-        vehicle_registration=client["Vehicle Registration"],
-
-        premium=client["Premium"]
-
-    )
+        "✅ Mark as Sent",
+        use_container_width=True
+    ):
 
 
-    st.session_state.current_whatsapp_client += 1
+        save_whatsapp_reminder(
 
-    st.success(
-        "WhatsApp reminder saved."
-    )
+            policy_number=client["Policy Number"],
 
-    st.rerun()
+            policy_holder=client["Policy Holder"],
+
+            vehicle_registration=client["Vehicle Registration"],
+
+            premium=client["Premium"]
+
+        )
+
+
+        st.success(
+            "WhatsApp reminder saved."
+        )
+
+
+        if (
+            st.session_state.current_whatsapp_client
+            < len(reminders) - 1
+        ):
+
+            st.session_state.current_whatsapp_client += 1
+
+
+        st.rerun()
+
+
+
+    st.divider()
+
+
 
     # -----------------------------------
     # Navigation
     # -----------------------------------
 
     col1, col2 = st.columns(2)
+
+
 
     with col1:
 
@@ -245,11 +332,17 @@ save_whatsapp_reminder(
             use_container_width=True
         ):
 
-            if st.session_state.current_whatsapp_client > 0:
+
+            if (
+                st.session_state.current_whatsapp_client
+                > 0
+            ):
 
                 st.session_state.current_whatsapp_client -= 1
 
                 st.rerun()
+
+
 
     with col2:
 
@@ -257,6 +350,7 @@ save_whatsapp_reminder(
             "Next ➡",
             use_container_width=True
         ):
+
 
             if (
                 st.session_state.current_whatsapp_client
