@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+from utils.database import save_whatsapp_reminder
 
 from utils.whatsapp import (
     format_phone,
@@ -206,6 +207,31 @@ def show_whatsapp_reminders(df):
     )
 
     st.divider()
+    if st.button(
+    "✅ Mark as Sent",
+    use_container_width=True
+):
+
+    save_whatsapp_reminder(
+
+        policy_number=client["Policy Number"],
+
+        policy_holder=client["Policy Holder"],
+
+        vehicle_registration=client["Vehicle Registration"],
+
+        premium=client["Premium"]
+
+    )
+
+
+    st.session_state.current_whatsapp_client += 1
+
+    st.success(
+        "WhatsApp reminder saved."
+    )
+
+    st.rerun()
 
     # -----------------------------------
     # Navigation
