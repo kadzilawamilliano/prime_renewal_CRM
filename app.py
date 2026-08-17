@@ -3,6 +3,7 @@ import pandas as pd
 
 from pages.dashboard import show_dashboard
 from pages.client_management import show_client_management
+from pages.whatsapp_reminders import show_whatsapp_reminders
 
 from supabase_client import supabase
 import admin
@@ -45,6 +46,7 @@ page = st.sidebar.radio(
 
         
         "Client Management",
+        "Whatsapp Reminder",
         
         "Dashboard",
 
@@ -135,6 +137,5 @@ elif page == "Reports":
 elif page == "Admin":
     admin.show(df)
 
-    #st.header(":material/admin_panel_settings: Admin")
-
-    #st.info("Admin module coming next.")
+elif page == "WhatsApp Reminders":
+    show_whatsapp_reminders(df)
