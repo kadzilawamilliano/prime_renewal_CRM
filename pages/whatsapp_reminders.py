@@ -211,8 +211,7 @@ def show_whatsapp_reminders(df):
     "✅ Mark as Sent",
     use_container_width=True
 ):
-
-    save_whatsapp_reminder(
+save_whatsapp_reminder(
 
         policy_number=client["Policy Number"],
 
