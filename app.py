@@ -130,7 +130,7 @@ elif page == "Client Management":
 elif page == "Reports":
     report.show(df)
 
-    st.header(":material/assessment: Reports")
+    #st.header(":material/assessment: Reports")
 
     #st.info("Reports module coming next.")
 
