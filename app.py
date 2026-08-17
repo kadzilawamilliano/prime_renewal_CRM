@@ -46,7 +46,7 @@ page = st.sidebar.radio(
 
         
         "Client Management",
-        "Whatsapp Reminder",
+        "Whatsapp Reminders",
         
         "Dashboard",
 
