@@ -44,10 +44,11 @@ def show_client_management(df):
     period = st.selectbox(
         "Reminder Period",
         [
+            "All",
             "Today",
             "Tomorrow",
             "Next 7 Days",
-            "All"
+            
         ]
     )
 
