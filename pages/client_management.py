@@ -250,227 +250,196 @@ def show_client_management(df):
     st.divider()
 
     
+        # -----------------------------------
+    # CALL OUTCOME
     # -----------------------------------
-# CALL OUTCOME
-# -----------------------------------
 
-st.subheader(
-    ":material/edit_note: Call Outcome"
-)
+    st.subheader(
+        ":material/edit_note: Call Outcome"
+    )
 
-call_status = st.selectbox(
+    call_status = st.selectbox(
 
-    "Call Status",
+        "Call Status",
 
-    [
+        [
 
-        "No Answer",
+            "No Answer",
 
-        "Busy",
+            "Busy",
 
-        "Wrong Number",
+            "Wrong Number",
 
-        "Will Renew",
+            "Will Renew",
 
-        "Pending Decision",
+            "Pending Decision",
 
-        "Not Interested",
+            "Not Interested",
 
-        "Renewed Already",
+            "Renewed Already",
 
-        "Not Reachable",
+            "Not Reachable",
 
-        "Will Not Renew",
+            "Will Not Renew",
 
-        "Invalid Number"
+            "Invalid Number"
+
+        ]
+
+    )
+
+    # -----------------------------------
+    # SMART DEFAULTS
+    # -----------------------------------
+
+    default_renewed = "No"
+    default_whatsapp = "Not Checked"
+
+    if call_status == "Renewed Already":
+
+        default_renewed = "Yes"
+        default_whatsapp = "Message Sent"
+
+    elif call_status == "Wrong Number":
+
+        default_whatsapp = "No WhatsApp"
+
+    elif call_status == "Invalid Number":
+
+        default_whatsapp = "Failed"
+
+    feedback = st.text_area(
+        "Feedback"
+    )
+
+    follow_up = st.date_input(
+        "Next Follow Up",
+        datetime.today()
+    )
+
+    renewed = st.selectbox(
+
+        "Renewed",
+
+        ["No", "Yes"],
+
+        index=0 if default_renewed == "No" else 1
+
+    )
+
+    whatsapp_options = [
+
+        "Not Checked",
+
+        "Message Sent",
+
+        "No WhatsApp",
+
+        "Failed"
 
     ]
 
-)
+    whatsapp_status = st.selectbox(
 
-# -----------------------------------
-# SMART DEFAULTS
-# -----------------------------------
+        "WhatsApp Status",
 
-default_renewed = "No"
-default_whatsapp = "Not Checked"
+        whatsapp_options,
 
-if call_status == "Renewed Already":
-
-    default_renewed = "Yes"
-    default_whatsapp = "Message Sent"
-
-elif call_status == "Wrong Number":
-
-    default_whatsapp = "No WhatsApp"
-
-elif call_status == "Invalid Number":
-
-    default_whatsapp = "Failed"
-
-feedback = st.text_area(
-    "Feedback"
-)
-
-follow_up = st.date_input(
-    "Next Follow Up",
-    datetime.today()
-)
-
-renewed = st.selectbox(
-
-    "Renewed",
-
-    ["No", "Yes"],
-
-    index=0 if default_renewed == "No" else 1
-
-)
-
-whatsapp_options = [
-
-    "Not Checked",
-
-    "Message Sent",
-
-    "No WhatsApp",
-
-    "Failed"
-
-]
-
-whatsapp_status = st.selectbox(
-
-    "WhatsApp Status",
-
-    whatsapp_options,
-
-    index=whatsapp_options.index(default_whatsapp)
-
-)
-st.divider()
-
-
-if st.button(
-
-    ":material/save: Save & Next Client",
-
-    use_container_width=True
-
-):
-
-    save_call_record(
-
-        policy_number=client["Policy Number"],
-
-        policy_holder=client["Policy Holder"],
-
-        vehicle_registration=client["Vehicle Registration"],
-
-        premium=client["Premium"],
-
-        call_status=call_status,
-
-        feedback=feedback,
-
-        next_follow_up=follow_up,
-
-        renewed=renewed,
-
-        whatsapp_status=whatsapp_status
+        index=whatsapp_options.index(default_whatsapp)
 
     )
-
-    st.success(
-        "Call record saved successfully."
-    )
-
-    if st.session_state.current_client < len(queue) - 1:
-
-        st.session_state.current_client += 1
-
-    else:
-
-        st.session_state.current_client = 0
-
-    st.rerun()
-
-
 
     st.divider()
 
+    if st.button(
 
-    st.subheader(
+        ":material/save: Save & Next Client",
 
-        ":material/history: Client Timeline"
+        use_container_width=True
 
-    )
+    ):
 
+        save_call_record(
 
-    history = get_client_history(
+            policy_number=client["Policy Number"],
 
-        client["Policy Number"]
+            policy_holder=client["Policy Holder"],
 
-    )
+            vehicle_registration=client["Vehicle Registration"],
 
+            premium=client["Premium"],
 
+            call_status=call_status,
 
-    if history.empty:
+            feedback=feedback,
 
+            next_follow_up=follow_up,
 
-        st.info(
+            renewed=renewed,
 
-            "No activities yet."
+            whatsapp_status=whatsapp_status
 
         )
 
+        st.success(
+            "Call record saved successfully."
+        )
+
+        if st.session_state.current_client < len(queue) - 1:
+
+            st.session_state.current_client += 1
+
+        else:
+
+            st.session_state.current_client = 0
+
+        st.rerun()
+
+    st.divider()
+
+    st.subheader(
+        ":material/history: Client Timeline"
+    )
+
+    history = get_client_history(
+        client["Policy Number"]
+    )
+
+    if history.empty:
+
+        st.info(
+            "No activities yet."
+        )
 
     else:
 
-
         for _, row in history.iterrows():
-
 
             with st.container(border=True):
 
-
                 st.write(
-
                     f"📅 {row['call_date']}"
-
                 )
 
-
                 st.write(
-
                     f"Status: {row['call_status']}"
-
                 )
 
-
                 st.write(
-
                     f"Feedback: {row['feedback']}"
-
                 )
 
-
                 st.write(
-
                     f"Next Follow Up: {row['next_follow_up']}"
-
                 )
 
-
                 st.write(
-
                     f"Renewed: {row['renewed']}"
-
                 )
-
 
                 st.write(
-
                     f"WhatsApp: {row['whatsapp_status']}"
-
                 )
+
+
+    
