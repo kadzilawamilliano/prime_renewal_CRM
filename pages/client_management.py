@@ -14,11 +14,22 @@ from utils.whatsapp import (
     whatsapp_link,
     call_link
 )
-
-        
 def show_client_management(df):
 
     st.header(":material/groups: Client Management")
+
+    # -----------------------------------
+    # PREPARE DATA
+    # -----------------------------------
+
+    df = df.copy()
+
+    df["Renewal Date"] = pd.to_datetime(
+        df["Renewal Date"],
+        errors="coerce"
+    )
+
+    today = pd.Timestamp.today().normalize()
 
     # -----------------------------------
     # SEARCH
@@ -29,88 +40,99 @@ def show_client_management(df):
     )
 
     # -----------------------------------
-    # DATE FILTER
+    # FILTERS
     # -----------------------------------
 
-    today = pd.Timestamp.today().normalize()
+    col1, col2 = st.columns(2)
 
-    df = df.copy()
+    with col1:
 
-    df["Renewal Date"] = pd.to_datetime(
-        df["Renewal Date"],
-        errors="coerce"
-    )
+        period = st.selectbox(
 
-    period = st.selectbox(
-        "Reminder Period",
-        [
-            "All",
-            "Today",
-            "Tomorrow",
-            "Next 7 Days",
-            
-        ]
-    )
+            "Client Queue",
 
-    if period == "Today":
+            [
 
-        queue = df[
-            df["Renewal Date"].dt.normalize()
-            == today
-        ]
+                "Today's Renewals",
 
-    elif period == "Tomorrow":
+                "Tomorrow's Renewals",
 
-        queue = df[
-            df["Renewal Date"].dt.normalize()
-            ==
-            today + pd.Timedelta(days=1)
-        ]
+                "Next 7 Days",
 
-    elif period == "Next 7 Days":
+                "All Clients"
 
-        queue = df[
-            (
-                df["Renewal Date"].dt.normalize()
-                >= today
-            )
-            &
-            (
-                df["Renewal Date"].dt.normalize()
-                <= today + pd.Timedelta(days=7)
-            )
-        ]
+            ]
 
-    else:
+        )
+
+    with col2:
 
         queue = df.copy()
 
-    queue = queue.reset_index(drop=True)
+        if period == "Today's Renewals":
+
+            queue = queue[
+                queue["Renewal Date"].dt.normalize()
+                == today
+            ]
+
+        elif period == "Tomorrow's Renewals":
+
+            queue = queue[
+                queue["Renewal Date"].dt.normalize()
+                ==
+                today + pd.Timedelta(days=1)
+            ]
+
+        elif period == "Next 7 Days":
+
+            queue = queue[
+                (
+                    queue["Renewal Date"].dt.normalize()
+                    >= today
+                )
+                &
+                (
+                    queue["Renewal Date"].dt.normalize()
+                    <= today + pd.Timedelta(days=7)
+                )
+            ]
 
     # -----------------------------------
-    # SEARCH MODE
+    # SEARCH FILTER
     # -----------------------------------
 
     if search:
 
         queue = queue[
+
             queue.astype(str)
+
             .apply(
+
                 lambda x:
+
                 x.str.contains(
+
                     search,
+
                     case=False,
+
                     na=False
+
                 ).any(),
+
                 axis=1
+
             )
+
         ]
+
+    queue = queue.reset_index(drop=True)
 
     if queue.empty:
 
-        st.warning(
-            "No client found."
-        )
+        st.warning("No clients found.")
 
         return
 
@@ -122,10 +144,7 @@ def show_client_management(df):
 
         st.session_state.current_client = 0
 
-    if (
-        st.session_state.current_client
-        >= len(queue)
-    ):
+    if st.session_state.current_client >= len(queue):
 
         st.session_state.current_client = 0
 
@@ -138,18 +157,18 @@ def show_client_management(df):
         "Start From Client",
 
         range(
+
             1,
+
             len(queue) + 1
+
         ),
 
         index=st.session_state.current_client
 
     )
 
-    if (
-        start - 1
-        != st.session_state.current_client
-    ):
+    if start - 1 != st.session_state.current_client:
 
         st.session_state.current_client = start - 1
 
@@ -158,6 +177,7 @@ def show_client_management(df):
     index = st.session_state.current_client
 
     client = queue.iloc[index]
+        
 
     # -----------------------------------
     # CLIENT SUMMARY
